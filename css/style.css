@@ -13,7 +13,7 @@ header {
 }
 
 header img {
-    height: 4rem;
+    height: 3rem;
 }
 
 .container {
@@ -185,4 +185,12 @@ a.google {
     .form {
         padding: 20px 10px;
     }
+}
+
+.error {
+    color: red;
+    font-size: 13px;
+    padding: 0.5%;
+    margin-bottom: 10%;
+    position: relative;
 }
