@@ -1,284 +1,242 @@
-<?php 
+<!DOCTYPE html>
+<html lang="en">
 
-include 'config.php';
-include 'google_config.php';
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-session_start();
+    <title>Online Learning & Course Management System</title>
+    <link rel="shortcut icon" href="./img/favicon.png" type="image/x-icon">
 
-error_reporting(0);
+    <!-- Vendor CSS -->
+    <link href="./assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="./assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="./assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
 
-include 'head.php';
-if (isset($_POST['login_submit'])) {
-	$email = $_POST['email'];
-	$password = md5($_POST['password']);
-
-	$sql = "SELECT * FROM `user` WHERE email='$email' AND password='$password' AND active=1";
-
-	$result = mysqli_query($conn, $sql);
-
-	if ($result->num_rows > 0) {
-		$row = mysqli_fetch_assoc($result);
-		$_SESSION['email'] = $row['email'];
-
-        if(isset($_POST['rememberme'])){
-
-            setcookie('email',$email,time()+86400);
-            setcookie('password',$_POST['password'],time()+86400);
-
-            header("Location: welcome.php");
-        }
-        else{
-            header("Location: welcome.php");
-        }
-	} 
-	else {
-		echo "<script>alert('Woops!! Email or Password is Wrong.')</script>";
-	}
-}
-
-
-if (isset($_POST['submit'])) {
-	$email = $_POST['semail'];
-	$password = md5($_POST['spassword']);
-	$cpassword = md5($_POST['cpassword']);
-
-	if ($password == $cpassword) {
-		$sql = "SELECT * FROM `user` WHERE `email`='$email'";
-		$result = mysqli_query($conn, $sql);
-		if (!$result->num_rows > 0) {
-
-            $row = mysqli_fetch_assoc($result);
-            $_SESSION['email'] = $row['email'];
-            
-            $token = bin2hex(random_bytes(10));//Random bytes
-
-            // echo $token;
-
-            $html = file_get_contents('./email_formats/email.html');
-
-            $subject = "CourseUp : Email Verification";
-            $url = "http://localhost/CourseUp/activate.php?token=$token";
-
-            $html =  str_replace("{{LINK}}",$url,$html);
-            $headers  = 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-            $headers .= "From: hbprajapati54@gmail.com";
-
-
-            $body = htmlspecialchars_decode($html);
-            if (mail($email, $subject, $body, $headers)) {
-                $_SESSION['activation_msg'] = "Check your mail $email to activate your account.";
-                header("Location: index.php");
-            } else {
-                $_SESSION['activation_msg'] = "Verification mail is not sent.";
-                header("Location: index.php");
-            }
-
-			$sql = "INSERT INTO `user` (`email`, `password`,`token`) VALUES ('$email', '$password','$token')";
-
-			$result = mysqli_query($conn, $sql);
-			if ($result) {
-                header("Location: index.php");
-
-				$email = "";
-				$_POST['password'] = "";
-				$_POST['cpassword'] = "";
-			} 
-			else 
-			{
-				echo "<script>alert('Woops! Something Wrong Went.')</script>";
-			}
-		} 
-		else {
-				echo "<script>alert('User already Exists.')</script>";
-		}		
-	} 
-	else {
-		echo "<script>alert('Password Not Matched.')</script>";
-	}
-}
-
-if(isset($_GET["code"])){
- $token = $google_client->fetchAccessTokenWithAuthCode($_GET["code"]);
-
- if(!isset($token['error']))
- {
-  $google_client->setAccessToken($token['access_token']);
-
-  $_SESSION['access_token'] = $token['access_token'];
-
-  $google_service = new Google_Service_Oauth2($google_client);
-
-  $data = $google_service->userinfo->get();
-
-  if(!empty($data['email']))
-  {
-   $email = $data['email'];
-
-   $sql = "SELECT * FROM `user` WHERE `email`='$email'";
-   $result = mysqli_query($conn, $sql);
-    if (!$result->num_rows > 0) {
-        $sql2 = "INSERT INTO `user` (`email`, `password`,`token`,`active`) VALUES ('$email', '','',1)";
-
-        $result2 = mysqli_query($conn, $sql2);
-        if ($result2) {
-            header("Location: welcome.php");
-    
-            $email = "";
-        } 
-        else 
-        {
-            echo "<script>alert('Woops! Something Wrong Went.')</script>";
-        }
-    }
-    else {
-        header("Location: welcome.php");
-    }
-
-  }
- }
-}
-?>
+    <!-- Custom CSS -->
+    <link href="./css/home.css" rel="stylesheet">
+</head>
 
 <body>
-    <header>
-        <br>
-        <img src="./img/Logo.png" alt="" srcset="">
-    </header>
-    <section class="container forms">
-        <div class="form login">
-            <div class="form-content">
-                <header>Login</header>
-                <form action="" method="POST">
-                    <span style="color:green;font-size:13px"><?php if(isset($_SESSION['activation_msg'])){
-                        echo $_SESSION['activation_msg'];
-                    } ?></span>
 
-                    <div class="field input-field">
-                        <input type="email" oninput="validateEmail(this)" placeholder="Enter Email" name="email" class="input" value="<?php if(isset($_COOKIE['email']))
-                        { echo $_COOKIE['email']; } ?>">
-                        <p id="email_error" class="error"></p>
-                    </div>
-                    <div class="field input-field" style="margin:25px 0px">
-                        <input type="password" oninput="validatePassword(this)" placeholder="Enter Password" name="password" class="password" value="<?php if(isset($_COOKIE['password']))
-                        { echo $_COOKIE['password']; } ?>">
-                        <i class='bx bx-hide eye-icon'></i>
-                        <p id="password_error" class="error"></p>
-                    </div>
-                    <div class="rememberme">
-                        <input type="checkbox" id="rememberme" name="rememberme" class="rememberme">
-                        <label for="rememberme">Remember Me</label>
-                        <div style="float:right;font-size:14px;margin-top:10px">
-                            <a href="./forgot_password.php" class="forgot-pass">Forgot password?</a>
+    <!-- Header -->
+    <header id="header" class="fixed-top d-flex align-items-center header-transparent">
+        <div class="container d-flex justify-content-between align-items-center">
+
+            <div class="logo">
+                <h1 class="text-light"><img src="./img/White_Logo.png" alt="" srcset=""></h1>
+            </div>
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="./index.php">Home</a></li>
+                    <li><a href="./about.php">About Us</a></li>
+                    <li><a href="./courses.php">Courses</a></li>
+                    <li><a href="./contact.php">Contact</a></li>
+                    <li><a href="./login.php">Login / SignUp</a></li>
+                </ul>
+                <i class='bx bx-menu mobile-nav-toggle'></i>
+            </nav>
+        </div>
+    </header><!-- End Header -->
+
+    <!-- Main Section -->
+    <section id="hero" class="d-flex justify-cntent-center align-items-center">
+        <div id="heroCarousel" class="container carousel carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-item active">
+                <div class="carousel-container">
+                    <h2 class="animate__animated animate__fadeInDown">Improve Your Grades With Online Courses</h2>
+                    <p class="animate__animated animate__fadeInUp">Want to improve and grow skills at different fields
+                        like Data
+                        Analysis, AI, Management etc.</p>
+                </div>
+            </div>
+        </div>
+    </section><!-- End Main -->
+
+    <main id="main">
+        <section class="services">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up">
+                        <div class="icon-box icon-box-pink">
+                            <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                            <h4 class="title"><a href="#">Design & Development</a></h4>
+                            <p>Learn Designing skills, Grow skills in Android, Web Development</p>
                         </div>
                     </div>
 
-                    <div class="field button-field">
-                        <button name="login_submit">Login</button>
+                    <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
+                        <div class="icon-box icon-box-cyan">
+                            <div class="icon"><i class="bx bx-file"></i></div>
+                            <h4 class="title"><a href="#">Marketing</a></h4>
+                            <p>Strengthen your Digital marketing skills over 1000 of courses.</p>
+                        </div>
                     </div>
-                </form>
-                <div class="form-link">
-                    <span>Don't have an account? <a href="#" class="link signup-link">SignUp</a></span>
+
+                    <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+                        <div class="icon-box icon-box-green">
+                            <div class="icon"><i class="bx bx-tachometer"></i></div>
+                            <h4 class="title"><a href="">Personal Development</a></h4>
+                            <p>Build confidence while public speaking, interview practices, communication skills.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+                        <div class="icon-box icon-box-blue">
+                            <div class="icon"><i class="bx bx-world"></i></div>
+                            <h4 class="title"><a href="">Photography</a></h4>
+                            <p>Certified courses of Photo & Videography. Build career in Photography.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section class="contact" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+            <div class="container">
+                <div class="container">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4>Explore Courses</h4>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <img src="./img/python.png" alt="" srcset="">
+                            <h6>The Complete Python Course</h6>
+                            <p>From : Code With Harry</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <img src="./img/business.jpg" alt="" srcset="">
+                            <h6>Business Planning Course</h6>
+                            <p>From : Chris Evans</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <img src="./img/prsnl_dev.jpg" alt="" srcset="">
+                            <h6>Personality Development</h6>
+                            <p>From : Sandeep Maheshawri</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <img src="./img/photography.jpg" alt="" srcset="">
+                            <h6>Photography Masterclasses</h6>
+                            <p>From : Steve McCurry</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="line"></div>
-            <div class="media-options">
-                <?php 
-                    echo '<a href="'.$google_client->createAuthUrl().'" class="field google">
-                        <img src="./img/google.png" alt="" class="google-img">
-                        <span>Login with Google</span>
-                    </a>';
-                ?>
+        </section><!-- End Courses Section -->
+
+
+        <!-- About Section -->
+        <section class="why-us section-bg" data-aos="fade-up" date-aos-delay="200">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-6 img-box">
+                        <img src="./img/about.jpg" class="img-fluid" alt="">
+                    </div>
+
+                    <div class="col-lg-6 d-flex flex-column justify-content-center p-5">
+
+                        <div class="icon-box">
+                            <div class="icon"><i class="bx bx-fingerprint"></i></div>
+                            <h4 class="title"><a href="">Upskill your team with CourseUp</a></h4>
+                            <p class="description">Unlimited access to 19,000+ top courses, anytime, anywhere</p>
+                            <p class="description">International course collection in 14 languages</p>
+                        </div>
+
+                        <div class="icon-box">
+                            <div class="icon"><i class="bx bx-gift"></i></div>
+                            <h4 class="title"><a href="">Become an instructor</a></h4>
+                            <p class="description">Instructors from around the world teach millions of students on
+                                Udemy. We provide
+                                the tools and skills to teach what you love.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section><!-- End About Section -->
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-3 col-md-6 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 footer-links">
+                        <h4>Our Services</h4>
+                        <ul>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 footer-contact">
+                        <h4>Contact Us</h4>
+                        <p>
+                            <strong>Phone:</strong> +91 9898989898<br>
+                            <strong>Email:</strong> courseup@gmail.com<br>
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 footer-info">
+                        <h3>Social Media</h3>
+                        <div class="social-links mt-3">
+                            <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                            <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                            <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                            <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
 
-        <!-- Signup Form -->
-        <div class="form signup">
-            <div class="form-content">
-                <header>Sign Up</header>
-                <form action="" method="POST">
-                    <div class="field input-field">
-                        <input type="email" oninput="validateEmail(this)" placeholder="Enter Email" name="semail" class="input">
-                        <p id="semail_error" class="error"></p>
-                    </div>
-
-                    <div class="field input-field">
-                        <input type="password" oninput="validatePassword(this)" placeholder="Create Password" name="spassword" class="password" id="password">
-                        <p id="spassword_error" class="error"></p>
-                    </div>
-
-                    <div class="field input-field">
-                        <input type="password" oninput="validateConfirmPassword(this)" placeholder="Confirm Password" name="cpassword" class="password">
-                        <i class='bx bx-hide eye-icon'></i>
-                        <p id="cpassword_error" class="error"></p>
-                    </div>
-
-                    <div class="field button-field">
-                        <button name="submit">Signup</button>
-                    </div>
-                </form>
-
-                <div class="form-link">
-                    <span>Already have an account? <a href="#" class="link login-link">Login</a></span>
-                </div>
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright <strong><span>CourseUp</span></strong>. All Rights Reserved.
             </div>
-
-            <div class="line"></div>
-            <div class="media-options">
-                <?php 
-                    echo '<a href="'.$google_client->createAuthUrl().'" class="field google">
-                        <img src="./img/google.png" alt="" class="google-img">
-                        <span>Login with Google</span>
-                    </a>';
-                ?>
-            </div>
-
         </div>
-    </section>
+    </footer><!-- End Footer -->
 
-    <!-- JavaScript -->
-    <script src="./js/script.js"></script>
-    <script>
-        const validateEmail = (element) => {
-            let email = element.value;
-            let name = element.name;
-            let pattern = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9]+[.]+[a-zA-Z.]+$/;
-            if (email.length == 0) {
-                document.getElementById(name+"_error").innerHTML = "*This field is required.";
-            }
-            else if (!email.match(pattern)) {
-                document.getElementById(name+"_error").innerHTML = "*Please enter valid email format.";
-            }
-            else {
-                document.getElementById(name+"_error").innerHTML = "";
-            }
-        }
-        const validatePassword = (element) => {
-            let password = element.value;
-            let name = element.name;
-            if (password.length == 0) {
-                document.getElementById(name+"_error").innerHTML = "*This field is required.";
-            }
-            else if (password.length < 8 ) {
-                document.getElementById(name+"_error").innerHTML = "*Password must be of 8 characters.";
-            }
-            else {
-                document.getElementById(name+"_error").innerHTML = "";
-            }
-        }
-        const validateConfirmPassword = (element) => {
-            let cpassword = element.value;
-            let name = element.name;
-            let password = document.getElementById("password").value;
-            // alert(password)
-            if (password != cpassword) {
-                document.getElementById(name+"_error").innerHTML = "*Password are not matching.";
-            }
-            else {
-                document.getElementById(name+"_error").innerHTML = "";
-            }
-        }
-    </script>
+    <!-- Vendor JS-->
+    <script src="./assets/vendor/aos/aos.js"></script>
+
+    <!-- Custom JS -->
+    <script src="./js/main.js"></script>
+
 </body>
 
 </html>

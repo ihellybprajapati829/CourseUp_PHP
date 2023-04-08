@@ -34,17 +34,17 @@ if (isset($_POST['submit'])) {
             $body = htmlspecialchars_decode($html);
             if (mail($email, $subject, $body, $headers)) {
                 $_SESSION['activation_msg'] = "Check your mail $email to reset password.";
-                header("Location: index.php");
+                header("Location: login.php");
             } else {
                 $_SESSION['activation_msg'] = "Reset mail is not sent.";
-                header("Location: index.php");
+                header("Location: login.php");
             }
 
             $sql = "UPDATE `user` SET `token` = '$token' WHERE `user`.`email` = '$email';";
 
 			$result = mysqli_query($conn, $sql);
 			if ($result) {
-                header("Location: index.php");
+                header("Location: login.php");
 				$email = "";
 			} 
 			else 
@@ -80,7 +80,7 @@ if (isset($_POST['submit'])) {
                     </div>
                 </form>
                 <div class="form-link">
-                    <span>Back To <a href="./index.php">Login</a> Page</span>
+                    <span>Back To <a href="./login.php">Login</a> Page</span>
                 </div>
             </div>
         </div>

@@ -11,7 +11,7 @@ $google_client->setClientId('587243604422-9gtu67220vcelpidlabj37fs7nh1lt2v.apps.
 $google_client->setClientSecret('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');
 
 //Set the OAuth 2.0 Redirect URI
-$google_client->setRedirectUri('http://localhost/CourseUp/index.php');
+$google_client->setRedirectUri('http://localhost/CourseUp/login.php');
 
 // to get the email and profile 
 $google_client->addScope('email');

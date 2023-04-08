@@ -30,7 +30,7 @@ if(isset($_GET['token'])){
                 $result = mysqli_query($conn, $updatequery);
                 if ($result) {
                     $_SESSION['activation_msg'] = "Password is reset now.";
-                    header("Location: index.php");
+                    header("Location: login.php");
                 } 
                 else 
                 {
@@ -75,7 +75,7 @@ if(isset($_GET['token'])){
                     </div>
                 </form>
                 <div class="form-link">
-                    <span>Back To <a href="./index.php">Login</a> Page</span>
+                    <span>Back To <a href="./login.php">Login</a> Page</span>
                 </div>
             </div>
         </div>

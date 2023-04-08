@@ -13,13 +13,12 @@ if(isset($_GET['token'])){
     if($query){
         if(isset($_SESSION['activation_msg'])){
             $_SESSION['activation_msg'] = "Account activated. Now you can login.";
-            header("Location: index.php");
+            header("Location: login.php");
         }
     }
     else{
-        dd("errro");
         $_SESSION['activation_msg'] = "Account is not activated.";
-        header("Location: index.php");
+        header("Location: login.php");
     }
 }
 ?>
