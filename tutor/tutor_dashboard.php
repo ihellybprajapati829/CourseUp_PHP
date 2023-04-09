@@ -21,6 +21,11 @@
             $_SESSION['image'] = $image;
             $_SESSION['tutor_id'] = $row['id'];
         } 
+
+        $tutor_id = $_SESSION['tutor_id'];
+        $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
+        $result = mysqli_query($conn, $sql);
+        $count = $result->num_rows;
 ?>
 <!Doctype html>
 <html lang="en">
@@ -55,7 +60,6 @@
 <body>
 
   <main class="d-flex flex-nowrap">
-    <h1 class="visually-hidden">Sidebars examples</h1>
 
     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
       <img src="../img/White_Logo.png" alt="" srcset="" style="width:200px;">
@@ -72,7 +76,7 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white">
+          <a href="./add_course.php" class="nav-link text-white">
             Add Course
           </a>
         </li>
@@ -94,7 +98,7 @@
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="#">Sign out</a></li>
+          <li><a class="dropdown-item" href="./signout.php">Sign out</a></li>
         </ul>
       </div>
     </div>
@@ -110,7 +114,7 @@
           <div class="col-md-3">
             <div class="info-box">
               <h6>No of Courses</h6>
-              <h2>6</h2>
+              <h2><?php echo $count;?></h2>
             </div>
           </div>
           <div class="col-md-3">
@@ -122,36 +126,32 @@
         </div>
         <br>
         <h5>Current Courses</h5>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="info-box">
-              <img src="../img/python.png" alt="" srcset="">
-              <h6>The Complete Python Course</h6>
-              <p>From : Code With Harry</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="info-box">
-              <img src="../img/business.jpg" alt="" srcset="">
-              <h6>Business Planning Course</h6>
-              <p>From : Chris Evans</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="info-box">
-              <img src="../img/prsnl_dev.jpg" alt="" srcset="">
-              <h6>Personality Development</h6>
-              <p>From : Sandeep Maheshawri</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="info-box">
-              <img src="../img/photography.jpg" alt="" srcset="">
-              <h6>Photography Masterclasses</h6>
-              <p>From : Steve McCurry</p>
-            </div>
-          </div>
-        </div>
+
+
+
+        <?php
+            $query = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
+            $query_run = mysqli_query($conn,$query);
+
+            if(mysqli_num_rows($query_run) > 0)
+            {
+              ?>
+                <div class="row">
+                <?php
+                  while($row = mysqli_fetch_assoc($query_run))
+                  {?>
+                    <div class="col-md-3">
+                      <div class="info-box">
+                        <img src="<?php echo $row['image'] ?>" alt="" srcset="">
+                        <h6><?php echo $row['name'] ?></h6>
+                        <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">View</a>
+                      </div>
+                    </div>
+                    <?php              
+                  }?>
+                  </div>
+                <?php 
+            } ?>
       </div>
     </div>
 

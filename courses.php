@@ -54,67 +54,32 @@
                 </div>
             </div>
             <br>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/python.png" alt="" srcset="">
-                        <h6>The Complete Python Course</h6>
-                        <p>From : Code With Harry</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/business.jpg" alt="" srcset="">
-                        <h6>Business Planning Course</h6>
-                        <p>From : Chris Evans</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/prsnl_dev.jpg" alt="" srcset="">
-                        <h6>Personality Development</h6>
-                        <p>From : Sandeep Maheshawri</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/photography.jpg" alt="" srcset="">
-                        <h6>Photography Masterclasses</h6>
-                        <p>From : Steve McCurry</p>
-                    </div>
-                </div>
-            </div>
+            <div class="container">
+                <?php
+                    include './config.php';
 
-            <br>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/photography.jpg" alt="" srcset="">
-                        <h6>Photography Masterclasses</h6>
-                        <p>From : Steve McCurry</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/prsnl_dev.jpg" alt="" srcset="">
-                        <h6>Personality Development</h6>
-                        <p>From : Sandeep Maheshawri</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/python.png" alt="" srcset="">
-                        <h6>The Complete Python Course</h6>
-                        <p>From : Code With Harry</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <img src="./img/business.jpg" alt="" srcset="">
-                        <h6>Business Planning Course</h6>
-                        <p>From : Chris Evans</p>
-                    </div>
-                </div>
+                    $query = "SELECT * FROM `course`";
+                    $query_run = mysqli_query($conn,$query);
+
+                    if(mysqli_num_rows($query_run) > 0)
+                    {
+                    ?>
+                        <div class="row">
+                        <?php
+                        while($row = mysqli_fetch_assoc($query_run))
+                        {?>
+                            <div class="col-md-3">
+                            <div class="info-box">
+                                <img src="<?php echo $row['image'] ?>" alt="" srcset="">
+                                <h6><?php echo $row['name'] ?></h6>
+                                <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">View</a>
+                            </div>
+                            </div>
+                            <?php              
+                        }?>
+                        </div>
+                        <?php 
+                    } ?>
             </div>
 
         </div>

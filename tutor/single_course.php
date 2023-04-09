@@ -9,9 +9,9 @@
         $tutor_id = $_SESSION['tutor_id'];
         // echo $tutor_id;
 
-        $course_name = "MySQL";
-        $cousre_desc = "Structured Query Language (SQL) is a special purpose language for interacting with relational databases.";
-        $duration = "24 HRS.";
+        $course_id = $_GET['id'];
+        // echo $course_id;
+
 ?>
 <!Doctype html>
 <html lang="en">
@@ -46,7 +46,6 @@
 <body>
 
   <main class="d-flex flex-nowrap">
-    <h1 class="visually-hidden">Sidebars examples</h1>
 
     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
       <img src="../img/White_Logo.png" alt="" srcset="" style="width:200px;">
@@ -63,7 +62,7 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white">
+          <a href="./add_course.php" class="nav-link text-white">
             Add Course
           </a>
         </li>
@@ -85,7 +84,7 @@
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="#">Sign out</a></li>
+          <li><a class="dropdown-item" href="./signout.php">Sign out</a></li>
         </ul>
       </div>
     </div>
@@ -98,53 +97,46 @@
         <div class="row">
           <div class="col-md-12">
             <div class="info-box">
-              <img src="../img/python.png" alt="" align="left" style="margin:3%; width:300px;">
-              <br>
-              <div style="text-align:left;">
+
                 <br>
-                <h2><?php echo $course_name; ?></h2>
-                <h6>Duration : <?php echo $duration; ?></h6>
-                <p><?php echo $cousre_desc; ?></p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <div style="margin:0% 5% ">
-                    <h5>Lesson 1 : <?php echo $course_name; ?></h5>
-                    <p>Lesson Content 
-                        <br>Table of contents:
-                            Course Overview
-                            Introduction
-                            Understanding Basic SQL Syntax	
-                            Querying Data with the SELECT Statement	
-                            Filtering Results with the WHERE Clause	
-                            Shaping Results with ORDER BY and GROUP BY	
-                            Matching Different Data Tables with JOINs	
-                            Adding, Changing, and Removing Data	
-                            Creating Database Tables
-                    </p>
-                    <p>Documents : Download</p>
-                    <p>References : <a href="">Link</a></p>
-                </div>
-                <br>
-                <div style="margin:0% 5% ">
-                    <h5>Lesson 1 : <?php echo $course_name; ?></h5>
-                    <p>Lesson Content 
-                        <br>Table of contents:
-                            Course Overview
-                            Introduction
-                            Understanding Basic SQL Syntax	
-                            Querying Data with the SELECT Statement	
-                            Filtering Results with the WHERE Clause	
-                            Shaping Results with ORDER BY and GROUP BY	
-                            Matching Different Data Tables with JOINs	
-                            Adding, Changing, and Removing Data	
-                            Creating Database Tables
-                    </p>
-                    <p>Documents : Download</p>
-                    <p>References : <a href="">Link</a></p>
-                </div>
-              </div>
+
+                <?php
+                    $query = "SELECT * FROM `course` where `id`='$course_id'";
+                    $query_run = mysqli_query($conn,$query);
+
+                    if(mysqli_num_rows($query_run) > 0)
+                    {
+                      while($row = mysqli_fetch_assoc($query_run))
+                      {?>
+                          <img src="<?php echo $row['image']?>" alt="" align="left" style="margin:3%; width:300px;">
+                          <br>
+                          <div style="text-align:left;">
+                            <h2><?php echo $row['name']; ?></h2>
+                            <h6>Duration : <?php echo $row['duration']; ?></h6>
+                            <p><?php echo $row['description']; ?></p>
+                          </div>  
+                        <?php 
+                      }
+                    } ?>
+                <div style="text-align:left;margin-top:150px">
+                <?php
+                    $query = "SELECT * FROM `lessons` where `course_id`='$course_id'";
+                    $query_run = mysqli_query($conn,$query);
+
+                    if(mysqli_num_rows($query_run) > 0)
+                    {
+                      while($row = mysqli_fetch_assoc($query_run))
+                      {?>
+                          <div style="margin:0% 5% ">
+                              <h5>Lesson : <?php echo $row['name']; ?></h5>
+                                    <p><?php echo $row['content']; ?></p>
+                                    <p>References : <?php echo $row['reference']; ?></p>
+                                  </div>
+                                <br> 
+                        <?php 
+                      }
+                    } ?>
+                 </div>
             </div>
           </div>
         </div>
