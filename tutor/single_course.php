@@ -2,6 +2,9 @@
     include '../config.php';
     session_start();
 
+    if(!isset($_SESSION['email'])){
+      header("location:../login.php");
+    }
         $email = $_SESSION['email'];
         $usr_id = $_SESSION['usr_id'];
         $name = $_SESSION['name'];

@@ -5,6 +5,11 @@
     // echo $_SESSION['email'];
     // echo $_SESSION['usr_id'];
 
+
+    if(!isset($_SESSION['email'])){
+      header("location:../login.php");
+    }
+
         $email = $_SESSION['email'];
         $usr_id = $_SESSION['usr_id'];
     

@@ -123,6 +123,7 @@ if(isset($_GET["code"])){
   if(!empty($data['email']))
   {
    $email = $data['email'];
+   $_SESSION['name'] = $data['name'];
 
    $sql = "SELECT * FROM `user` WHERE `email`='$email'";
    $result = mysqli_query($conn, $sql);

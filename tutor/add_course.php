@@ -4,6 +4,11 @@
     // echo "Tutor dashboard";
     // echo $_SESSION['email'];
     // echo $_SESSION['usr_id'];
+
+    if(!isset($_SESSION['email'])){
+        header("location:../login.php");
+    }
+
     unset($_SESSION['course_id']);
     unset($_SESSION['msg']);
 
