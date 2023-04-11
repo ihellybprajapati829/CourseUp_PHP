@@ -29,7 +29,8 @@ if (isset($_POST['login_submit'])) {
         }
 
         if(empty($selector)){
-            header("Location: create_profile.php");
+            // header("Location: create_profile.php");
+            header("Location: select_role.php");
         }
         else{
             if($selector == "learner"){
@@ -132,8 +133,8 @@ if(isset($_GET["code"])){
 
         $result2 = mysqli_query($conn, $sql2);
         if ($result2) {
-            header("Location: create_profile.php");
-    
+            // header("Location: create_profile.php");
+            header("Location: select_role.php");
             $email = "";
         } 
         else 
@@ -149,7 +150,8 @@ if(isset($_GET["code"])){
         $selector = $row['selector'];
 
         if(empty($selector)){
-            header("Location: create_profile.php");
+            // header("Location: create_profile.php");
+            header("Location: select_role.php");
         }
         else{
             if($selector == "learner"){

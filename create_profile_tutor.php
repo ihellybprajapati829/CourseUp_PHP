@@ -10,6 +10,69 @@ $email = $_SESSION['email'];
 $usr_id = $_SESSION['usr_id'];
 
 include 'head.php';
+
+if(isset($_POST['submit']))
+{
+    $name=$_POST['name'];
+    $country_code = $_POST['country_code'];
+    $number = $_POST['mobile'];
+    $about = $_POST['about'];
+    $contactno = $country_code . ' ' . $number;
+
+    $profilepic=$_FILES['img'];
+    $filename=$profilepic['name'];
+    $filepath=$profilepic['tmp_name'];
+    $filesize=$profilepic['size'];
+    $fileerror=$profilepic['error'];
+    $filetype=$profilepic['type'];
+    $fileExt=explode('.',$filename);
+    $fileactualExt=strtolower(end($fileExt));
+    $allowed=array('jpg','jpeg','png');
+        if(in_array($fileactualExt,$allowed))
+        {
+            if($filesize<1000000) //10mb max
+            {            
+                $destfile='profile_pic/'.$filename;
+                move_uploaded_file($filepath,$destfile);
+
+                $sql="INSERT INTO `tutor` (`usr_id`,`name`, `contact_no`, `about`,`image`) VALUES ('$usr_id','$name','$contactno','$about','$destfile')";
+
+                $result = mysqli_query($conn, $sql);
+
+                if($result)
+                {
+                    ?>
+                    <script>
+                        alert("Woho!!! Tutor added.")
+                    </script>
+                    <?php
+                    header ('location: ./tutor/tutor_dashboard.php');
+                }
+                else{
+                    ?>
+                    <script>
+                        alert("Woops! Something Wrong Went.")
+                    </script> 
+                    <?php 
+                }
+            }
+            else{
+                ?>
+                <script>
+                    alert("Oops!! File size is too big.")
+                </script>
+                <?php
+            }
+        }
+        else{
+            ?>
+            <script>
+                  alert("Oops!! You cannot upload file of this extension. Please upload it in jpg, jpeg or png form.")
+            </script>
+            <?php
+        }
+}
+
 ?>
 
 <body>
@@ -20,7 +83,7 @@ include 'head.php';
     <section class="container forms">
         <div class="form login"  style="min-width:600px;">
             <div class="form-content">
-                <form action="" method="POST">
+                <form action="" method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <label for="name">Name :</label>
                         <div class="field input-field">

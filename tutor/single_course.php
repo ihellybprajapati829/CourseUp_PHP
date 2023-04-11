@@ -113,9 +113,9 @@
                       {?>
                           <img src="<?php echo $row['image']?>" alt="" align="left" style="margin:3%; width:300px;">
                           <br>
+                          <br>
                           <div style="text-align:left;">
                             <h2><?php echo $row['name']; ?></h2>
-                            <h6>Duration : <?php echo $row['duration']; ?></h6>
                             <p><?php echo $row['description']; ?></p>
                           </div>  
                         <?php 
@@ -132,6 +132,7 @@
                       {?>
                           <div style="margin:0% 5% ">
                               <h5>Lesson : <?php echo $row['name']; ?></h5>
+                                    <h6>Duration : <?php echo $row['duration']; ?></h6>
                                     <p><?php echo $row['content']; ?></p>
                                     <p>References : <?php echo $row['reference']; ?></p>
                                   </div>

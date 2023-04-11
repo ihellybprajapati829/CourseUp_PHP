@@ -1,9 +1,6 @@
 <?php 
     include '../config.php';
     session_start();
-    // echo "Tutor dashboard";
-    // echo $_SESSION['email'];
-    // echo $_SESSION['usr_id'];
 
     if(!isset($_SESSION['email'])){
         header("location:../login.php");
@@ -32,22 +29,35 @@
             $cname = $_POST['cname'];
             $category_id = $_POST['category'];
             $cdesc = $_POST['cdesc'];
-            $duration = $_POST['day'] . " Days " . $_POST['time'];
             $price = "Rs. " . $_POST['cprice'];
-            $cimg = $_POST['cimg'];
-        
-            $sql2 = "INSERT INTO `course` (`id`,`category_id`,`tutor_id`,`name`,`description`,`duration` ,`price`,`image`,`active`) VALUES ('$count','$category_id','$tutor_id','$cname','$cdesc','$duration','$price','$cimg',1)";
+            $cimg = $_FILES['cimg'];
 
-            $result2 = mysqli_query($conn, $sql2);
-            
-            if ($result2) {
-                // header("Location: ./add_course.php");
-                $_SESSION['msg'] = "Course Added.";
-			} 
-			else 
-			{
-				echo "<script>alert('Woops! Something Wrong Went.')</script>";
-			}
+            $filename=$cimg['name'];
+            $filepath=$cimg['tmp_name'];
+            $filesize=$cimg['size'];
+            $fileerror=$cimg['error'];
+            $filetype=$cimg['type'];
+            $fileExt=explode('.',$filename);
+            $fileactualExt=strtolower(end($fileExt));
+            $allowed=array('jpg','jpeg','png');
+
+            if(in_array($fileactualExt,$allowed)){
+                $destfile='../thumbnail/'.$filename;
+                move_uploaded_file($filepath,$destfile);
+
+                $sql2 = "INSERT INTO `course` (`id`,`category_id`,`tutor_id`,`name`,`description`,`price`,`image`,`active`) VALUES ('$count','$category_id','$tutor_id','$cname','$cdesc','$price','$destfile',1)";
+
+                $result2 = mysqli_query($conn, $sql2);
+                
+                if ($result2) {
+                    // header("Location: ./add_course.php");
+                    $_SESSION['msg'] = "Course Added.";
+                } 
+                else 
+                {
+                    echo "<script>alert('Woops! Something Wrong Went.')</script>";
+                }
+            }
         }
 
 ?>
@@ -136,7 +146,7 @@
                 <br>
                 <h2>Add New Course</h2>
                 <br>
-                <form action="" method="POST" id="addCourse">
+                <form action="" method="POST" id="addCourse" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
@@ -183,33 +193,19 @@
                             <label for="cdesc" class="form-label">
                                 <h5>Course Description</h5>
                             </label>
-                            <textarea type="text" class="form-control" rows="2"
+                            <textarea type="text" class="form-control" rows="3"
                                 placeholder="Enter brief description of course" name="cdesc" required></textarea>
                             <br>
 
                             <div class="row">
-                                <div class="col-md-4">
-                                    <h5>Duration</h5>
-                                </div>
+                                <div class="col-md-4"></div>
                                 <div class="col-md-4">
                                     <h5>Price</h5>
                                 </div>
                                 <div class="col-md-4">
                                     <h5>Thumbnail</h5>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="day" class="form-label">Day</label>
-                                            <input type="text" class="form-control" name="day" placeholder="00"
-                                                maxlength="2" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="time" class="form-label">Time</label>
-                                            <input type="time" class="form-control" name="time" value="00:00" required>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="col-md-4"></div>
                                 <div class="col-md-4">
                                     <div class="row">
                                         <label class="form-label">Price in Rupee Format</label>
@@ -272,7 +268,10 @@
                                                 </div>
                                             </div>
                                             <br>
-
+                                            <label for="time" class="form-label">
+                                                <h5>Duration</h5></label>
+                                            <input type="time" class="form-control" name="duration" value="00:00" required> 
+                                            <br>
                                             <label for="lcontent" class="form-label">
                                                 <h5>Content</h5>
                                             </label>
@@ -337,6 +336,7 @@
     });
 
     function submitForm(){
+
         $.ajax({
             type: "POST",
             url: "add_lesson.php",

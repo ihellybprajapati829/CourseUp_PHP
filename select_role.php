@@ -10,6 +10,24 @@ $email = $_SESSION['email'];
 $usr_id = $_SESSION['usr_id'];
 
 include 'head.php';
+
+if (isset($_POST['submit'])) {
+	$selector = $_POST['selector'];
+
+    $sql = "UPDATE `user` SET `selector` = '$selector' where `email`='$email'";
+
+    $result = mysqli_query($conn, $sql);
+
+    if($result){
+        if($selector == "learner"){
+            header("Location: create_profile_tutor.php");
+        }
+        if($selector == "tutor"){
+            header("Location: create_profile_tutor.php");
+        }
+    }
+}
+
 ?>
 
 <body>
@@ -21,26 +39,26 @@ include 'head.php';
     <section style="margin:2%" align="center">
         <h5>Select your role...</h5>
         <div class="row">
-            <form action="">
+            <form action="" method="POST">
                 <label for="learner">
                     <div class="selector">
-                        <div class="img-box">
+                        <div class="img-box" id="llearner">
                             <img src="./img/student_icon.png" alt="" srcset="">
                             <h5>Student</h5>
                         </div>
                     </div>
                 </label>
-                <!-- <input type="radio" name="selector" id="learner"> -->
+                <input type="radio" name="selector" id="learner" value="learner" hidden>
 
                 <label for="tutor">
                     <div class="selector">
-                        <div class="img-box">
+                        <div class="img-box" id="ltutor">
                             <img src="./img/tutor_icon.png" alt="" srcset="">
                             <h5>Tutor</h5>
                         </div>
                     </div>
                 </label>
-                <!-- <input type="radio" name="selector" id="tutor"> -->
+                <input type="radio" name="selector" id="tutor" value="tutor" hidden>
                 <div style="width:200px;margin-left:42%;margin-top:2%">
                     <div class="field button-field">
                         <button name="submit" style="padding:4%">Continue</button>
@@ -49,6 +67,17 @@ include 'head.php';
             </form>
         </div>
     </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        $(document).ready(function (){
+            $("#tutor").click(function(){
+                $("#ltutor").css({"border":"2px double #444F5A"})
+            });
+            $("#learner").click(function(){
+                $("#llearner").css({"border":"2px double #444F5A"})
+            });
+        })
+    </script>
 </body>
 
 </html>

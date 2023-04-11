@@ -12,8 +12,11 @@ if (isset($_POST['lname'])) {
     $lcontent = $_POST['lcontent'];
     $lref = $_POST['lref'];
     $course_id = $_SESSION['course_id'];
+    $duration = $_POST['duration'];
    
-    $sql = "INSERT INTO `lessons` (`course_id`,`name`,`content`,`reference`) VALUES ('$course_id','$lname','$lcontent','$lref')";
+    echo $lcontent . "jhjhjkj";
+    die();
+    $sql = "INSERT INTO `lessons` (`course_id`,`name`,`duration` ,`content`,`reference`) VALUES ('$course_id','$lname','$duration','$lcontent','$lref')";
 
     $result = mysqli_query($conn, $sql);
     

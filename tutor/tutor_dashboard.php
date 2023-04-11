@@ -1,10 +1,6 @@
 <?php 
     include '../config.php';
     session_start();
-    // echo "Tutor dashboard";
-    // echo $_SESSION['email'];
-    // echo $_SESSION['usr_id'];
-
 
     if(!isset($_SESSION['email'])){
       header("location:../login.php");
@@ -20,8 +16,9 @@
         if ($result->num_rows > 0) {
             $row = mysqli_fetch_assoc($result);
             $name = $row['name'];
-            $image = $row['image'];
+            $imagePath = $row['image'];
 
+            $image = "../" . $imagePath;
             $_SESSION['name'] = $name;
             $_SESSION['image'] = $image;
             $_SESSION['tutor_id'] = $row['id'];
