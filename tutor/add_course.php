@@ -59,7 +59,6 @@
                 }
             }
         }
-
 ?>
 <!Doctype html>
 <html lang="en">
@@ -73,6 +72,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <script src="../assets/ckeditor/ckeditor.js"></script>
     <style>
     .b-example-divider {
         width: 100%;
@@ -255,7 +255,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="container">
-                                <form action="" method="POST" id="addLesson">
+                                <form action="" method="POST" id="addLesson" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="row">
@@ -272,12 +272,12 @@
                                                 <h5>Duration</h5></label>
                                             <input type="time" class="form-control" name="duration" value="00:00" required> 
                                             <br>
-                                            <label for="lcontent" class="form-label">
+                                            <label class="form-label">
                                                 <h5>Content</h5>
                                             </label>
-                                            <textarea type="text" id="text_editor" class="form-control"
-                                                placeholder="Enter Content" class="ckeditor" name="lcontent"
+                                            <textarea type="text" id="text_editor" class="ckeditor"  class="form-control"
                                                 required></textarea>
+                                                <textarea id="getcontent" name="lcontent" hidden></textarea>
                                             <br>
                                         </div>
                                     </div>
@@ -324,26 +324,26 @@
         integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous">
     </script>
     <script src="./sidebars.js"></script>
-    <script src="../assets/ckeditor/ckeditor.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        CKEDITOR.replace('text_editor');
-    });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     CKEDITOR.replace('text_editor');
+    //     // $ckeditor->editor('text_editor');
+    // });
 	
     $("#addLesson").submit(function(event){
+        var data = CKEDITOR.instances.text_editor.getData();
+        $('#getcontent').val(data);
         submitForm();
         return false;
     });
 
     function submitForm(){
-
         $.ajax({
             type: "POST",
             url: "add_lesson.php",
             data: $('form#addLesson').serialize(),
             success: function(response){
                 $('#addLesson')[0].reset();
-                $('text_editor').val('');
                 $("#addLesson-modal").modal('hide');
                 console.log(response);
             },

@@ -14,8 +14,6 @@ if (isset($_POST['lname'])) {
     $course_id = $_SESSION['course_id'];
     $duration = $_POST['duration'];
    
-    echo $lcontent . "jhjhjkj";
-    die();
     $sql = "INSERT INTO `lessons` (`course_id`,`name`,`duration` ,`content`,`reference`) VALUES ('$course_id','$lname','$duration','$lcontent','$lref')";
 
     $result = mysqli_query($conn, $sql);

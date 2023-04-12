@@ -132,7 +132,7 @@
                       {?>
                           <div style="margin:0% 5% ">
                               <h5>Lesson : <?php echo $row['name']; ?></h5>
-                                    <h6>Duration : <?php echo $row['duration']; ?></h6>
+                                    <h6>Duration : <?php echo $row['duration'] . " Hours"; ?></h6>
                                     <p><?php echo $row['content']; ?></p>
                                     <p>References : <?php echo $row['reference']; ?></p>
                                   </div>
