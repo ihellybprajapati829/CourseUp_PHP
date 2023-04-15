@@ -20,7 +20,7 @@ if (isset($_POST['submit'])) {
 
     if($result){
         if($selector == "learner"){
-            header("Location: create_profile_tutor.php");
+            header("Location: create_profile_learner.php");
         }
         if($selector == "tutor"){
             header("Location: create_profile_tutor.php");
