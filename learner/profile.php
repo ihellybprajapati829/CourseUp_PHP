@@ -9,7 +9,7 @@
         $email = $_SESSION['email'];
         $usr_id = $_SESSION['usr_id'];
     
-        $sql = "SELECT * FROM `tutor` WHERE `usr_id`='$usr_id'";
+        $sql = "SELECT * FROM `learner` WHERE `usr_id`='$usr_id'";
     
         $result = mysqli_query($conn, $sql);
     
@@ -17,6 +17,8 @@
             $row = mysqli_fetch_assoc($result);
             $name = $row['name'];
             $imagePath = $row['image'];
+            $interest = $row['interest'];
+            $contactNo = $row['contact_no'];
 
             $image = "../" . $imagePath;
             $_SESSION['name'] = $name;
@@ -24,10 +26,10 @@
             $_SESSION['tutor_id'] = $row['id'];
         } 
 
-        $tutor_id = $_SESSION['tutor_id'];
-        $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
-        $result = mysqli_query($conn, $sql);
-        $count = $result->num_rows;
+        // $tutor_id = $_SESSION['tutor_id'];
+        // $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
+        // $result = mysqli_query($conn, $sql);
+        // $count = $result->num_rows;
 ?>
 <!Doctype html>
 <html lang="en">
@@ -110,50 +112,47 @@
     <div class="flex-shrink-0 p-4 contact" style="width: 75%;">
       <div class="container">
         <br>
-        <h2>Dashboard</h2>
+        <h2>Profile</h2>
+
         <br>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="info-box">
-              <h6>No of Courses</h6>
-              <h2><?php echo $count;?></h2>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="info-box">
-              <h6>Earning</h6>
-              <h2>7,000</h2>
-            </div>
-          </div>
-        </div>
-        <br>
-        <h5>Current Courses</h5>
 
-
-
-        <?php
-            $query = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
-            $query_run = mysqli_query($conn,$query);
-
-            if(mysqli_num_rows($query_run) > 0)
-            {
-              ?>
-                <div class="row">
-                <?php
-                  while($row = mysqli_fetch_assoc($query_run))
-                  {?>
-                    <div class="col-md-3">
-                      <div class="info-box">
-                        <img src="<?php echo $row['image'] ?>" alt="" srcset="">
-                        <h6><?php echo $row['name'] ?></h6>
-                        <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">View</a>
-                      </div>
+        <div class="profile">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="<?php echo $image; ?>" class="card-img" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title" align="center"><?php echo $name; ?></h5>
+                        </div>
                     </div>
-                    <?php              
-                  }?>
-                  </div>
-                <?php 
-            } ?>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <br>
+                            <h6>Interests : </h6>
+                            <p style="margin-left:40px;">
+                            <ul>
+                            <?php
+
+                            $interests = explode(',',preg_replace("/[^a-zA-Z,]+/", "", $interest));
+                            foreach($interests as $ele){
+                                echo "<li>$ele</li>";
+                            }
+                            ?>
+                            </ul>
+
+                            <br>
+                            <h6>Email-ID : <?php echo $email; ?></h6>
+                            <br>
+                            <h6>Contact-No : <?php echo $contactNo; ?></h6>
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
 

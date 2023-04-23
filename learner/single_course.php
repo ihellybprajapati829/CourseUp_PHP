@@ -9,11 +9,7 @@
         $usr_id = $_SESSION['usr_id'];
         $name = $_SESSION['name'];
         $image = $_SESSION['image'];
-        $tutor_id = $_SESSION['tutor_id'];
-        // echo $tutor_id;
-
         $course_id = $_GET['id'];
-        // echo $course_id;
 
 ?>
 <!Doctype html>
@@ -100,9 +96,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="info-box">
-
                 <br>
-
                 <?php
                     $query = "SELECT * FROM `course` where `id`='$course_id'";
                     $query_run = mysqli_query($conn,$query);
@@ -116,30 +110,28 @@
                           <br>
                           <div style="text-align:left;">
                             <h2><?php echo $row['name']; ?></h2>
+                            <?php
+                                $tutor_id = $row['tutor_id'];
+                                $sql2 = "SELECT * FROM `tutor` WHERE `id`='$tutor_id'";
+                                $result2 = mysqli_query($conn, $sql2);
+                                    
+                                if ($result2->num_rows > 0) {
+                                  $row2 = mysqli_fetch_assoc($result2);
+                                  $tutor_name = $row2['name'];
+                                  echo "<h6>By :  $tutor_name</h6>";
+                                // die();
+                                } 
+                             ?> 
+                            <h3 id="price">Price : <?php echo $row['price']; ?></h3>      
                             <p><?php echo $row['description']; ?></p>
+                            <div id="buyCourse">
+                              <button id="buy" onclick="pay()">Buy Course</button>
+                            </div>
                           </div>  
                         <?php 
                       }
                     } ?>
                 <div style="text-align:left;margin-top:150px">
-                <?php
-                    $query = "SELECT * FROM `lessons` where `course_id`='$course_id'";
-                    $query_run = mysqli_query($conn,$query);
-
-                    if(mysqli_num_rows($query_run) > 0)
-                    {
-                      while($row = mysqli_fetch_assoc($query_run))
-                      {?>
-                          <div style="margin:0% 5% ">
-                              <h5>Lesson : <?php echo $row['name']; ?></h5>
-                                    <h6>Duration : <?php echo $row['duration'] . " Hours"; ?></h6>
-                                    <p><?php echo $row['content']; ?></p>
-                                    <p>References : <?php echo $row['reference']; ?></p>
-                                  </div>
-                                <br> 
-                        <?php 
-                      }
-                    } ?>
                  </div>
             </div>
           </div>
@@ -155,6 +147,55 @@
     integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
     crossorigin="anonymous"></script>
   <script src="./sidebars.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    function pay(){
+      var price = $('#price').html();
+      price = price.replace("Price : Rs. ","");
+      var usr_id = <?php echo $usr_id; ?>;
+      var email = '<?php echo $email; ?>';
+      var cousre_id = <?php echo $course_id; ?>;
+      var tutor_id = '<?php echo $tutor_id; ?>';
+      // alert(tutor_id);
+
+      var options = {
+          "key": "rzp_test_DKZesYIjZMQ68l",
+          "amount": price*100, 
+          "currency": "INR",
+          "name": "CourseUp",
+          "description": "Test Transaction",
+          "image": "../img/Logo.png",
+          "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+          "notes": {
+              "address": "Razorpay Corporate Office"
+          },
+          "theme": {
+              "color": "#444F5A"
+          },
+          "handler": function(response){
+            $.ajax({
+              url : "./pay.php",
+              type:"POST",
+              data : {
+                usr_id : usr_id,
+                tutor_id : tutor_id,
+                usr_email : email,
+                course_id : cousre_id,
+                amount : price
+              },
+              success : function(response){
+                alert(response);
+                window.location.href = "http://localhost/CourseUp/learner/search_courses.php";
+              }
+            })
+
+          }
+      };
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+    }
+  </script>
 </body>
 
 </html>

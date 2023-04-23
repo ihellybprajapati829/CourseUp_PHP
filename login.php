@@ -34,7 +34,7 @@ if (isset($_POST['login_submit'])) {
         }
         else{
             if($selector == "learner"){
-                header("Location: learner_dashboard.php");
+                header("Location: ./learner/learner_dashboard.php");
             }
             if($selector == "tutor"){
                 header("Location: ./tutor/tutor_dashboard.php");
@@ -155,7 +155,7 @@ if(isset($_GET["code"])){
         }
         else{
             if($selector == "learner"){
-                header("Location: learner_dashboard.php");
+                header("Location: ./learner/learner_dashboard.php");
             }
             if($selector == "tutor"){
                 header("Location: ./tutor/tutor_dashboard.php");

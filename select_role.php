@@ -27,7 +27,6 @@ if (isset($_POST['submit'])) {
         }
     }
 }
-
 ?>
 
 <body>
@@ -71,10 +70,12 @@ if (isset($_POST['submit'])) {
     <script>
         $(document).ready(function (){
             $("#tutor").click(function(){
-                $("#ltutor").css({"border":"2px double #444F5A"})
+                $("#ltutor").css({"border":"2px double #444F5A"});
+                $("#llearner").css({"border":"none"})
             });
             $("#learner").click(function(){
-                $("#llearner").css({"border":"2px double #444F5A"})
+                $("#llearner").css({"border":"2px double #444F5A"});
+                $("#ltutor").css({"border":"none"});
             });
         })
     </script>

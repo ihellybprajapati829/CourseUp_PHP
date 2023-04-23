@@ -667,3 +667,49 @@ section {
   font-weight: 700;
   margin: 10px 0;
 }
+
+/* .profile {
+  background-color: red;
+} */
+
+.profile .card {
+  border-radius: 0%;
+  border: none;
+  box-shadow: 0px 1px 26px 0 rgba(58, 63, 75, 0.073);
+}
+
+.profile .card .card-body {
+  padding: 5%;
+}
+
+.profile .card-img {
+  min-width: 240px;
+  min-height: 240px;
+  padding: 5%;
+  border: 1px solid rgba(119, 119, 119, 0.244);
+  /* box-shadow: 1px 1px 26px rgba(58, 63, 75, 0.073); */
+  margin-left: 8%;
+  margin-top: 5%;
+  border-radius: 50%;
+}
+
+#buyCourse button {
+  float: right;
+  margin-right: 10%;
+  background-color: #444F5A;
+  padding: 0.3% 3%;
+  color: white;
+  border: none;
+}
+
+#search {
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 30%;
+}
+
+#courses img {
+  width: 200px;
+}
