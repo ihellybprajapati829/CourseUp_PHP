@@ -9,6 +9,8 @@
         $usr_id = $_SESSION['usr_id'];
         $name = $_SESSION['name'];
         $image = $_SESSION['image'];
+        $learner_id = $_SESSION['learner_id'];
+        // echo $learner_id;
 ?>
 <!Doctype html>
 <html lang="en">
@@ -86,18 +88,10 @@
     <div class="flex-shrink-0 p-4 contact" style="width: 75%;">
       <div class="container" id="courses">
         <br>
-        <div>
-            <label for="search" style="margin-left:30%"><h6>Search for courses : </h6></label>
-            <input type="search" class="form-control" name="search" id="search" placeholder="What do you want to learn?">
-        </div>
-        <br><br>
+        <h5>My Courses</h5>
         <br>
-        <div class="row" id="searchedCourse">
-        </div>
-
-        <h5>All Course</h5>
         <?php
-            $query = "SELECT * FROM `course` LIMIT 4";
+            $query = "SELECT * FROM `course` c INNER JOIN `applied` a ON a.`course_id` = c.`id` WHERE a.`learner_id` = $learner_id ORDER BY a.`applied_at` DESC";
             $query_run = mysqli_query($conn,$query);
 
             if(mysqli_num_rows($query_run) > 0)
@@ -111,7 +105,7 @@
                       <div class="info-box">
                         <img src="<?php echo $row['image'] ?>" alt="">
                         <h6><?php echo $row['name'] ?></h6>
-                        <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">Buy Course</a>
+                        <a href="./access_course.php?course_id=<?php echo $row['course_id']?>" style="font-size: 16px;">View</a>
                       </div>
                     </div>
                     <?php              
@@ -120,7 +114,7 @@
                 <?php 
             } 
             else{
-              echo "<h4>No courses found...</h4>";
+              echo "<h4>No courses enrolled yet...</h4>";
             }
             ?>
       </div>

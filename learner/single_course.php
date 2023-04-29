@@ -51,23 +51,18 @@
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-          <a href="./tutor_dashboard.php" class="nav-link text-white">
+          <a href="./learner_dashboard.php" class="nav-link text-white">
             Home
           </a>
         </li>
         <li>
-          <a href="./tutor_course.php" class="nav-link text-white">
-            Courses
+          <a href="./courses.php" class="nav-link text-white">
+            Courses 
           </a>
         </li>
         <li>
-          <a href="./add_course.php" class="nav-link text-white">
-            Add Course
-          </a>
-        </li>
-        <li>
-          <a href="#" class="nav-link text-white">
-            Edit Courses
+          <a href="./search_courses.php" class="nav-link text-white">
+            Search Courses
           </a>
         </li>
       </ul>
@@ -109,6 +104,9 @@
                           <br>
                           <br>
                           <div style="text-align:left;">
+                            <div id="buyCourse">
+                              <button id="buy" onclick="pay()">Buy Course</button>
+                            </div>
                             <h2><?php echo $row['name']; ?></h2>
                             <?php
                                 $tutor_id = $row['tutor_id'];
@@ -119,18 +117,46 @@
                                   $row2 = mysqli_fetch_assoc($result2);
                                   $tutor_name = $row2['name'];
                                   echo "<h6>By :  $tutor_name</h6>";
-                                // die();
                                 } 
                              ?> 
                             <h3 id="price">Price : <?php echo $row['price']; ?></h3>      
                             <p><?php echo $row['description']; ?></p>
-                            <div id="buyCourse">
-                              <button id="buy" onclick="pay()">Buy Course</button>
-                            </div>
-                          </div>  
+                          </div> 
                         <?php 
                       }
-                    } ?>
+                    }
+
+                    ?>
+                    <div style="text-align:left; padding:0% 4%;margin-top:-10%">
+                      <table class="table">
+                        <thead>
+                          <th>No.</th>
+                          <th>Lesson Name</th>
+                          <th>Duration</th>
+                        </thead> 
+                        <tbody>
+                    <?php
+                    $query2 = "SELECT * FROM `lessons` where `course_id`='$course_id'";
+                    $query_run2 = mysqli_query($conn,$query2);
+
+                    if(mysqli_num_rows($query_run2) > 0)
+                    {
+                      $i = 1;
+                      while($row = mysqli_fetch_assoc($query_run2))
+                      {?>
+                          <tr>
+                              <td><?= $i ?></td>
+                              <td><?= $row['name'] ?></td>
+                              <td><?= $row['duration'] . " Hours"?></td>
+                          </tr>
+                        <?php 
+                        $i++;
+                      }
+                    }
+
+                    ?>
+                    </tbody>
+                  </div>  
                 <div style="text-align:left;margin-top:150px">
                  </div>
             </div>

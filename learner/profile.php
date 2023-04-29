@@ -26,10 +26,6 @@
             $_SESSION['tutor_id'] = $row['id'];
         } 
 
-        // $tutor_id = $_SESSION['tutor_id'];
-        // $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
-        // $result = mysqli_query($conn, $sql);
-        // $count = $result->num_rows;
 ?>
 <!Doctype html>
 <html lang="en">
@@ -70,23 +66,18 @@
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-          <a href="./tutor_dashboard.php" class="nav-link text-white">
+          <a href="./learner_dashboard.php" class="nav-link text-white">
             Home
           </a>
         </li>
         <li>
-          <a href="./tutor_course.php" class="nav-link text-white">
-            Courses
+          <a href="./courses.php" class="nav-link text-white">
+            Courses 
           </a>
         </li>
         <li>
-          <a href="./add_course.php" class="nav-link text-white">
-            Add Course
-          </a>
-        </li>
-        <li>
-          <a href="#" class="nav-link text-white">
-            Edit Courses
+          <a href="./search_courses.php" class="nav-link text-white">
+            Search Courses
           </a>
         </li>
       </ul>

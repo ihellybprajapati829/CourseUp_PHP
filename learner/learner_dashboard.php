@@ -25,9 +25,15 @@
         } 
 
         $learner_id = $_SESSION['learner_id'];
-        // $sql = "SELECT * FROM `course` where `learner_id`='$learner_id'";
-        // $result = mysqli_query($conn, $sql);
-        // $count = $result->num_rows;
+        // echo $learner_id;
+        $sql = "SELECT * FROM `applied` where `learner_id`='$learner_id'";
+        $result = mysqli_query($conn, $sql);
+        $count = $result->num_rows;
+
+        $sql2 = "SELECT SUM(amount) as SUM FROM `orders` WHERE `usr_id` = $learner_id AND `status` = 'success'";
+        $query_run2 = mysqli_query($conn,$sql2);
+        $row = mysqli_fetch_assoc($query_run2);
+        $amount = $row['SUM'];
 ?>
 <!Doctype html>
 <html lang="en">
@@ -73,18 +79,13 @@
           </a>
         </li>
         <li>
-          <a href="./tutor_course.php" class="nav-link text-white">
-            Courses
+          <a href="./courses.php" class="nav-link text-white">
+            Courses 
           </a>
         </li>
         <li>
-          <a href="./add_course.php" class="nav-link text-white">
-            Add Course
-          </a>
-        </li>
-        <li>
-          <a href="#" class="nav-link text-white">
-            Edit Courses
+          <a href="./search_courses.php" class="nav-link text-white">
+            Search Courses
           </a>
         </li>
       </ul>
@@ -119,12 +120,18 @@
               <h2><?php echo $count;?></h2>
             </div>
           </div>
+          <div class="col-md-3">
+            <div class="info-box">
+              <h6>Total Expense</h6>
+              <h2><?php echo $amount;?></h2>
+            </div>
+          </div>
         </div>
         <br>
-        <h5>Current Courses</h5>
-
+        <h5>Recent Courses</h5>
+        <br>
         <?php
-            $query = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
+            $query = "SELECT * FROM `course` c INNER JOIN `applied` a ON a.`course_id` = c.`id` WHERE a.`learner_id` = $learner_id ORDER BY a.`applied_at` DESC LIMIT 4";
             $query_run = mysqli_query($conn,$query);
 
             if(mysqli_num_rows($query_run) > 0)
@@ -136,16 +143,20 @@
                   {?>
                     <div class="col-md-3">
                       <div class="info-box">
-                        <img src="<?php echo $row['image'] ?>" alt="" srcset="">
+                        <img src="<?php echo $row['image'] ?>" alt="">
                         <h6><?php echo $row['name'] ?></h6>
-                        <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">View</a>
+                        <a href="./access_course.php?course_id=<?php echo $row['course_id']?>" style="font-size: 16px;">View</a>
                       </div>
                     </div>
                     <?php              
                   }?>
                   </div>
                 <?php 
-            } ?>
+            } 
+            else{
+              echo "<h4>No courses enrolled yet...</h4>";
+            }
+            ?>
       </div>
     </div>
 
@@ -156,7 +167,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
     integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
     crossorigin="anonymous"></script>
-  <script src="./sidebars.js"></script>
 </body>
 
 </html>
