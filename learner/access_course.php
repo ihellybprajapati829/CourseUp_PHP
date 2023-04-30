@@ -12,6 +12,7 @@
 
         $course_id = $_GET['course_id'];
         $_SESSION['course_id'] = $course_id;
+        $learner_id = $_SESSION['learner_id'];
 
         $query = "SELECT * FROM `course` WHERE `id` = $course_id ";
         $query_run = mysqli_query($conn,$query);
@@ -114,8 +115,6 @@
 
     <div class="flex-shrink-0 p-4 contact" style="width: 75%;">
       <div class="container" id="courses">
-        <br>
-
         <h5>Course Name : <?= $course_name ?></h5>
         <br>
         <img src="<?= $course_image ?>" alt="thumbnail" style="width:300px;height:250px;border:1px solid rgba(119, 119, 119, 0.244);">
@@ -123,6 +122,44 @@
         <br>
         <h5>Course Description : </h5>
         <p style="padding-left:100px"><?= $course_abt ?></p>
+      </div>
+
+      <br>
+      <div class="container">
+        <?php
+            $query = "SELECT * FROM `feedback` WHERE `course_id` = $course_id AND `learner_id` = $learner_id";
+            $query_run = mysqli_query($conn,$query);
+
+            if(mysqli_num_rows($query_run) > 0)
+            {
+              ?>
+                <h6>Feedback given by you :</h6>
+                <ul>
+                <?php
+                  while($row = mysqli_fetch_assoc($query_run))
+                  {?>
+                        <li>
+                          <?= $row['review'] ?>
+                        </li>
+                    <?php              
+                  }?>
+                </ul>
+                <?php 
+            } 
+            else{
+              echo "<h6>No Feedbacks by you...</h6>";
+            }
+        ?>
+      </div>
+      <br>
+      <div class="container">
+        <div class="field input-field" style="margin:25px 0px">
+          <label for="feedback">Give Feedback : </label>
+          <br>
+          <textarea name="review" id="feedback" cols="100" rows="3" class="field input-field" style="border:1px double grey"></textarea>
+          <input type="button" value="Post" id="feedback_post" class="btn btn-success">
+          <div id="msg" style="color:green"></div>
+        </div>  
       </div>
     </div>
 
@@ -133,6 +170,28 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
     integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
     crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script>
+        $(document).ready(function(){
+            $('#feedback_post').click(function(){
+                var review = $('#feedback').val();
+                var course_id = <?php echo $course_id ?>;
+                // console.log(course_id);
+                $.ajax({
+                  url: "./feedback_ajax.php",
+                  type : "POST",
+                  data : {
+                    course_id : course_id,
+                    review : review
+                  },
+                  success : function(res){
+                    $('#msg').html(res);
+                  }
+                });
+            })
+        })
+  </script>          
+
 </body>
 
 </html>

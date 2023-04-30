@@ -1,35 +1,35 @@
-<?php 
-    include '../config.php';
-    session_start();
+<?php
+include '../config.php';
+session_start();
 
-    if(!isset($_SESSION['email'])){
-      header("location:../login.php");
-    }
+if (!isset($_SESSION['email'])) {
+  header("location:../login.php");
+}
 
-        $email = $_SESSION['email'];
-        $usr_id = $_SESSION['usr_id'];
-    
-        $sql = "SELECT * FROM `tutor` WHERE `usr_id`='$usr_id'";
-    
-        $result = mysqli_query($conn, $sql);
-    
-        if ($result->num_rows > 0) {
-            $row = mysqli_fetch_assoc($result);
-            $name = $row['name'];
-            $imagePath = $row['image'];
-            $about = $row['about'];
-            $contactNo = $row['contact_no'];
+$email = $_SESSION['email'];
+$usr_id = $_SESSION['usr_id'];
 
-            $image = "../" . $imagePath;
-            $_SESSION['name'] = $name;
-            $_SESSION['image'] = $image;
-            $_SESSION['tutor_id'] = $row['id'];
-        } 
+$sql = "SELECT * FROM `tutor` WHERE `usr_id`='$usr_id'";
 
-        // $tutor_id = $_SESSION['tutor_id'];
-        // $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
-        // $result = mysqli_query($conn, $sql);
-        // $count = $result->num_rows;
+$result = mysqli_query($conn, $sql);
+
+if ($result->num_rows > 0) {
+  $row = mysqli_fetch_assoc($result);
+  $name = $row['name'];
+  $imagePath = $row['image'];
+  $about = $row['about'];
+  $contactNo = $row['contact_no'];
+
+  $image = "../" . $imagePath;
+  $_SESSION['name'] = $name;
+  $_SESSION['image'] = $image;
+  $_SESSION['tutor_id'] = $row['id'];
+}
+
+// $tutor_id = $_SESSION['tutor_id'];
+// $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
+// $result = mysqli_query($conn, $sql);
+// $count = $result->num_rows;
 ?>
 <!Doctype html>
 <html lang="en">
@@ -85,15 +85,19 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white">
-            Edit Courses
+          <a href="./delete_course.php" class="nav-link text-white">
+            Delete Courses
+          </a>
+        </li>
+        <li>
+          <a href="./payment_status.php" class="nav-link text-white">
+            Payment Status
           </a>
         </li>
       </ul>
       <hr>
       <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-          data-bs-toggle="dropdown" aria-expanded="false">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="<?php echo $image; ?>" alt="" width="32" height="32" class="rounded-circle me-2">
           <strong>&nbsp;<?php echo $name; ?></strong>
         </a>
@@ -117,43 +121,39 @@
         <br>
 
         <div class="profile">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card" style="width: 18rem;">
-                        <img src="<?php echo $image; ?>" class="card-img" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title" align="center"><?php echo $name; ?></h5>
-                        </div>
-                    </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card" style="width: 18rem;">
+                <img src="<?php echo $image; ?>" class="card-img" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title" align="center"><?php echo $name; ?></h5>
                 </div>
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <br>
-                            <h6>About : </h6>
-                            <p style="margin-left:40px;"><?php echo $about; ?></p>
-
-                            <br>
-                            <h6>Email-ID : <?php echo $email; ?></h6>
-                            <br>
-                            <h6>Contact-No : <?php echo $contactNo; ?></h6>
-                            <br>
-
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-body">
+                  <br>
+                  <h6>About : </h6>
+                  <p style="margin-left:40px;"><?php echo $about; ?></p>
+
+                  <br>
+                  <h6>Email-ID : <?php echo $email; ?></h6>
+                  <br>
+                  <h6>Contact-No : <?php echo $contactNo; ?></h6>
+                  <br>
+
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
-    integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
-    integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
   <script src="./sidebars.js"></script>
 </body>
 

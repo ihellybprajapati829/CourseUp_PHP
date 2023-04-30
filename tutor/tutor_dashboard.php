@@ -1,33 +1,45 @@
-<?php 
-    include '../config.php';
-    session_start();
+<?php
+include '../config.php';
+session_start();
 
-    if(!isset($_SESSION['email'])){
-      header("location:../login.php");
-    }
+if (!isset($_SESSION['email'])) {
+  header("location:../login.php");
+}
 
-        $email = $_SESSION['email'];
-        $usr_id = $_SESSION['usr_id'];
-    
-        $sql = "SELECT * FROM `tutor` WHERE `usr_id`='$usr_id'";
-    
-        $result = mysqli_query($conn, $sql);
-    
-        if ($result->num_rows > 0) {
-            $row = mysqli_fetch_assoc($result);
-            $name = $row['name'];
-            $imagePath = $row['image'];
+$email = $_SESSION['email'];
+$usr_id = $_SESSION['usr_id'];
 
-            $image = "../" . $imagePath;
-            $_SESSION['name'] = $name;
-            $_SESSION['image'] = $image;
-            $_SESSION['tutor_id'] = $row['id'];
-        } 
+$sql = "SELECT * FROM `tutor` WHERE `usr_id`='$usr_id'";
 
-        $tutor_id = $_SESSION['tutor_id'];
-        $sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
-        $result = mysqli_query($conn, $sql);
-        $count = $result->num_rows;
+$result = mysqli_query($conn, $sql);
+
+if ($result->num_rows > 0) {
+  $row = mysqli_fetch_assoc($result);
+  $name = $row['name'];
+  $imagePath = $row['image'];
+
+  $image = "../" . $imagePath;
+  $_SESSION['name'] = $name;
+  $_SESSION['image'] = $image;
+  $_SESSION['tutor_id'] = $row['id'];
+}
+
+$tutor_id = $_SESSION['tutor_id'];
+$sql = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
+$result = mysqli_query($conn, $sql);
+$count = $result->num_rows;
+
+$sql2 = "SELECT SUM(amount) as SUM FROM `orders`o INNER JOIN `course` c ON c.`id` = o.`course_id` WHERE c.`tutor_id` = $tutor_id AND o.`status` = 'success'";
+$query_run2 = mysqli_query($conn, $sql2);
+$row = mysqli_fetch_assoc($query_run2);
+$amount = $row['SUM'];
+
+$sql3 = "SELECT COUNT(learner_id) as users FROM `applied` WHERE `tutor_id` = $tutor_id";
+$query_run3 = mysqli_query($conn, $sql3);
+$row = mysqli_fetch_assoc($query_run3);
+$users = $row['users'];
+// echo $users;
+
 ?>
 <!Doctype html>
 <html lang="en">
@@ -83,15 +95,19 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white">
-            Edit Courses
+          <a href="./delete_course.php" class="nav-link text-white">
+            Delete Courses
+          </a>
+        </li>
+        <li>
+          <a href="./payment_status.php" class="nav-link text-white">
+            Payment Status
           </a>
         </li>
       </ul>
       <hr>
       <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-          data-bs-toggle="dropdown" aria-expanded="false">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="<?php echo $image; ?>" alt="" width="32" height="32" class="rounded-circle me-2">
           <strong>&nbsp;<?php echo $name; ?></strong>
         </a>
@@ -116,54 +132,51 @@
           <div class="col-md-3">
             <div class="info-box">
               <h6>No of Courses</h6>
-              <h2><?php echo $count;?></h2>
+              <h2><?php echo $count; ?></h2>
             </div>
           </div>
           <div class="col-md-3">
             <div class="info-box">
-              <h6>Earning</h6>
-              <h2>7,000</h2>
+              <h6>Total Users(All courses)</h6>
+              <h2><?= $users ?></h2>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="info-box">
+              <h6>Earning(In Rs.)</h6>
+              <h2><?= number_format($amount) ?></h2>
             </div>
           </div>
         </div>
         <br>
         <h5>Current Courses</h5>
-
-
-
         <?php
-            $query = "SELECT * FROM `course` where `tutor_id`='$tutor_id'";
-            $query_run = mysqli_query($conn,$query);
+        $query = "SELECT * FROM `course` c where `tutor_id`='$tutor_id'";
+        $query_run = mysqli_query($conn, $query);
 
-            if(mysqli_num_rows($query_run) > 0)
-            {
-              ?>
-                <div class="row">
-                <?php
-                  while($row = mysqli_fetch_assoc($query_run))
-                  {?>
-                    <div class="col-md-3">
-                      <div class="info-box">
-                        <img src="<?php echo $row['image'] ?>" alt="" srcset="">
-                        <h6><?php echo $row['name'] ?></h6>
-                        <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">View</a>
-                      </div>
-                    </div>
-                    <?php              
-                  }?>
-                  </div>
-                <?php 
+        if (mysqli_num_rows($query_run) > 0) {
+        ?>
+          <div class="row">
+            <?php
+            while ($row = mysqli_fetch_assoc($query_run)) { ?>
+              <div class="col-md-3">
+                <div class="info-box">
+                  <img src="<?php echo $row['image'] ?>" alt="" srcset="">
+                  <h6><?php echo $row['name'] ?></h6>
+                  <a href="./single_course.php?id=<?php echo $row['id'] ?>" style="font-size: 16px;">View</a>
+                </div>
+              </div>
+            <?php
             } ?>
+          </div>
+        <?php
+        } ?>
       </div>
     </div>
 
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
-    integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
-    integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
   <script src="./sidebars.js"></script>
 </body>
 

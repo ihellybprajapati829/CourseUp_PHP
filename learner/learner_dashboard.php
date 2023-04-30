@@ -123,7 +123,7 @@
           <div class="col-md-3">
             <div class="info-box">
               <h6>Total Expense</h6>
-              <h2><?php echo $amount;?></h2>
+              <h2><?php echo  number_format($amount);?></h2>
             </div>
           </div>
         </div>

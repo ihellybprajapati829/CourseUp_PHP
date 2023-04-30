@@ -10,6 +10,7 @@
         $name = $_SESSION['name'];
         $image = $_SESSION['image'];
         $course_id = $_GET['id'];
+        $learner_id = $_SESSION['learner_id'];
 
 ?>
 <!Doctype html>
@@ -127,7 +128,13 @@
                     }
 
                     ?>
-                    <div style="text-align:left; padding:0% 4%;margin-top:-10%">
+                    <?php
+                    $query2 = "SELECT * FROM `lessons` where `course_id`='$course_id'";
+                    $query_run2 = mysqli_query($conn,$query2);
+
+                    if(mysqli_num_rows($query_run2) > 0)
+                    {?>
+                      <div style="text-align:left; padding:0% 4%;margin-top:-10%">
                       <table class="table">
                         <thead>
                           <th>No.</th>
@@ -135,12 +142,7 @@
                           <th>Duration</th>
                         </thead> 
                         <tbody>
-                    <?php
-                    $query2 = "SELECT * FROM `lessons` where `course_id`='$course_id'";
-                    $query_run2 = mysqli_query($conn,$query2);
-
-                    if(mysqli_num_rows($query_run2) > 0)
-                    {
+                      <?php 
                       $i = 1;
                       while($row = mysqli_fetch_assoc($query_run2))
                       {?>
@@ -151,14 +153,39 @@
                           </tr>
                         <?php 
                         $i++;
-                      }
-                    }
+                      }?>
+                      </tbody>
+                  </div> 
 
+                    <?php
+                    }
+                    else{
+                      echo "<h6>No lessons.</h6>";
+                    }
                     ?>
-                    </tbody>
-                  </div>  
-                <div style="text-align:left;margin-top:150px">
-                 </div>
+                <div style="text-align:left;margin-top:180px">
+                <?php
+                      $query3 = "SELECT f.`review`, l.`name` FROM `feedback` f INNER JOIN `learner` l ON l.`id` = f.`learner_id` where f.`course_id`='$course_id'";
+                      $query_run3 = mysqli_query($conn,$query3);
+
+                      if(mysqli_num_rows($query_run3) > 0)
+                      {
+                        echo "<h6>Reviews :</h6><ul>";
+                        while($row = mysqli_fetch_assoc($query_run3))
+                        {?>
+                              <li>     
+                                <p><?= $row['review'] . ". <span style='font-weight:bold;'> By : " . $row['name'] . "</span>" ?></p>
+                              </li>  
+                          <?php 
+                        }
+                      }
+                      else{
+                        echo "<h6>No Reviews yet.</h6>";
+                      }
+                  ?>
+                  </ul>
+                  <br>
+                </div>
             </div>
           </div>
         </div>
@@ -179,7 +206,7 @@
     function pay(){
       var price = $('#price').html();
       price = price.replace("Price : Rs. ","");
-      var usr_id = <?php echo $usr_id; ?>;
+      var usr_id = <?php echo $learner_id; ?>;
       var email = '<?php echo $email; ?>';
       var cousre_id = <?php echo $course_id; ?>;
       var tutor_id = '<?php echo $tutor_id; ?>';
