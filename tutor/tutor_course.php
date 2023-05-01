@@ -118,7 +118,10 @@ $tutor_id = $_SESSION['tutor_id'];
             } ?>
           </div>
         <?php
-        } ?>
+        } else {
+          echo "<br><h6>No Courses Yet...</h6>";
+        }
+        ?>
       </div>
     </div>
 

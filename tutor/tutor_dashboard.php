@@ -170,7 +170,11 @@ $users = $row['users'];
             } ?>
           </div>
         <?php
-        } ?>
+        } else {
+          echo "<br><h6>No Courses Yet...</h6>";
+        }
+
+        ?>
       </div>
     </div>
 

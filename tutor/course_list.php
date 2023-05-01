@@ -150,15 +150,12 @@ if ($result->num_rows > 0) {
                                         </tr>
                         </div>
                     <?php
-                                    }
-                    ?>
+                                    } ?>
                     </tbody>
                     </table>
                 </div>
             </div>
         <?php
-                    } else {
-                        echo "<h6>No Courses Yet...</h6>";
                     } ?>
         <br>
         </div>

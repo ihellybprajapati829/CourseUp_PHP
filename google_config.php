@@ -17,5 +17,3 @@ $google_client->setRedirectUri('http://localhost/CourseUp/login.php');
 $google_client->addScope('email');
 
 $google_client->addScope('profile');
-
-?>

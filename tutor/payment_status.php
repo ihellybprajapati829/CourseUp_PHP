@@ -136,13 +136,13 @@ if ($result->num_rows > 0) {
                 <br>
                 <br>
                 <div id="order_table">
-                    <h5>All Orders</h5>
                     <?php
                     $query = "SELECT o.`id`, l.`name`as 'learner' ,c.`name` as 'course',o.`amount`,o.`created_at` FROM `orders` o INNER JOIN `course` c ON o.`course_id` = c.`id` INNER JOIN `learner` l ON l.`id` = o.`usr_id` WHERE c.`tutor_id`='$tutor_id'";
                     $query_run = mysqli_query($conn, $query);
 
                     if (mysqli_num_rows($query_run) > 0) {
                     ?>
+                        <h5>All Orders</h5>
                         <div class="container">
                             <table class="table" id="orders">
                                 <thead>
@@ -168,11 +168,13 @@ if ($result->num_rows > 0) {
                     </tbody>
                     </table>
                 </div>
+                <button class="btn btn-primary" onclick="ExportToExcel('xlsx')">Export Payment Report</button>
             </div>
         <?php
+                    } else {
+                        echo "<br><h6>No Orders Yet...</h6>";
                     } ?>
         <br>
-        <button class="btn btn-primary" onclick="ExportToExcel('xlsx')">Export Payment Report</button>
         </div>
         </div>
         </div>
