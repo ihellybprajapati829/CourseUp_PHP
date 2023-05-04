@@ -30,7 +30,7 @@
 
             <nav id="navbar" class="navbar">
                 <ul>
-                <li><a href="./index.php">Home</a></li>
+                    <li><a href="./index.php">Home</a></li>
                     <li><a href="./about.php">About Us</a></li>
                     <li><a href="./courses.php">Courses</a></li>
                     <li><a href="./contact.php">Contact</a></li>
@@ -56,30 +56,27 @@
             <br>
             <div class="container">
                 <?php
-                    include './config.php';
+                include './config.php';
 
-                    $query = "SELECT * FROM `course`";
-                    $query_run = mysqli_query($conn,$query);
+                $query = "SELECT * FROM `course`";
+                $query_run = mysqli_query($conn, $query);
 
-                    if(mysqli_num_rows($query_run) > 0)
-                    {
-                    ?>
-                        <div class="row">
+                if (mysqli_num_rows($query_run) > 0) {
+                ?>
+                    <div class="row">
                         <?php
-                        while($row = mysqli_fetch_assoc($query_run))
-                        {?>
+                        while ($row = mysqli_fetch_assoc($query_run)) { ?>
                             <div class="col-md-3">
-                            <div class="info-box">
-                                <img src="<?php echo $row['image'] ?>" alt="" srcset="">
-                                <h6><?php echo $row['name'] ?></h6>
-                                <a href="./single_course.php?id=<?php echo $row['id']?>" style="font-size: 16px;">View</a>
+                                <div class="info-box">
+                                    <img src="<?php echo "./CourseUp/" . $row['image'] ?>" alt="" srcset="">
+                                    <h6><?php echo $row['name'] ?></h6>
+                                </div>
                             </div>
-                            </div>
-                            <?php              
-                        }?>
-                        </div>
-                        <?php 
-                    } ?>
+                        <?php
+                        } ?>
+                    </div>
+                <?php
+                } ?>
             </div>
 
         </div>

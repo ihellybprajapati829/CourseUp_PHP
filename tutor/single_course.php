@@ -126,15 +126,17 @@ $course_id = $_GET['id'];
                 $query = "SELECT * FROM `lessons` where `course_id`='$course_id'";
                 $query_run = mysqli_query($conn, $query);
 
+                $i = 1;
                 if (mysqli_num_rows($query_run) > 0) {
                   while ($row = mysqli_fetch_assoc($query_run)) { ?>
                     <div style="margin:0% 5% ">
-                      <h5>Lesson : <?php echo $row['name']; ?></h5>
+                      <h5>Lesson <?php echo $i . " : " . $row['name']; ?></h5>
                       <h6>Duration : <?php echo $row['duration'] . " Hours"; ?></h6>
                       <p><?php echo $row['content']; ?></p>
                     </div>
                     <br>
                 <?php
+                    $i++;
                   }
                 } ?>
               </div>

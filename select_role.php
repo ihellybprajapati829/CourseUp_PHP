@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include 'config.php';
 
@@ -12,17 +12,19 @@ $usr_id = $_SESSION['usr_id'];
 include 'head.php';
 
 if (isset($_POST['submit'])) {
-	$selector = $_POST['selector'];
+    $selector = $_POST['selector'];
+    // echo $selector;
+    // die();
 
     $sql = "UPDATE `user` SET `selector` = '$selector' where `email`='$email'";
 
     $result = mysqli_query($conn, $sql);
 
-    if($result){
-        if($selector == "learner"){
+    if ($result) {
+        if ($selector == "learner") {
             header("Location: create_profile_learner.php");
         }
-        if($selector == "tutor"){
+        if ($selector == "tutor") {
             header("Location: create_profile_tutor.php");
         }
     }
@@ -30,7 +32,7 @@ if (isset($_POST['submit'])) {
 ?>
 
 <body>
-<header>
+    <header>
         <br>
         <img src="./img/Logo.png" alt="" srcset="">
         <h3>Welcome to CourseUp! <img src="./img/celebration.png" alt=""></h3>
@@ -68,14 +70,22 @@ if (isset($_POST['submit'])) {
     </section>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script>
-        $(document).ready(function (){
-            $("#tutor").click(function(){
-                $("#ltutor").css({"border":"2px double #444F5A"});
-                $("#llearner").css({"border":"none"})
+        $(document).ready(function() {
+            $("#tutor").click(function() {
+                $("#ltutor").css({
+                    "border": "2px double #444F5A"
+                });
+                $("#llearner").css({
+                    "border": "none"
+                })
             });
-            $("#learner").click(function(){
-                $("#llearner").css({"border":"2px double #444F5A"});
-                $("#ltutor").css({"border":"none"});
+            $("#learner").click(function() {
+                $("#llearner").css({
+                    "border": "2px double #444F5A"
+                });
+                $("#ltutor").css({
+                    "border": "none"
+                });
             });
         })
     </script>
