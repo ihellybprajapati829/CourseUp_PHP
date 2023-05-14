@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include 'config.php';
 include 'google_config.php';
@@ -9,67 +9,62 @@ error_reporting(0);
 
 include 'head.php';
 if (isset($_POST['login_submit'])) {
-	$email = $_POST['email'];
-	$password = md5($_POST['password']);
+    $email = $_POST['email'];
+    $password = md5($_POST['password']);
 
-	$sql = "SELECT * FROM `user` WHERE email='$email' AND password='$password' AND active=1";
+    $sql = "SELECT * FROM `user` WHERE email='$email' AND password='$password' AND active=1";
 
-	$result = mysqli_query($conn, $sql);
+    $result = mysqli_query($conn, $sql);
 
-	if ($result->num_rows > 0) {
-		$row = mysqli_fetch_assoc($result);
-		$_SESSION['email'] = $row['email'];
+    if ($result->num_rows > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $_SESSION['email'] = $row['email'];
         $_SESSION['usr_id'] = $row['id'];
 
         $selector = $row['selector'];
 
-        if(isset($_POST['rememberme'])){
-            setcookie('email',$email,time()+86400);
-            setcookie('password',$_POST['password'],time()+86400);
+        if (isset($_POST['rememberme'])) {
+            setcookie('email', $email, time() + 86400);
+            setcookie('password', $_POST['password'], time() + 86400);
         }
 
-        if(empty($selector)){
-            // header("Location: create_profile.php");
+        if (empty($selector)) {
             header("Location: select_role.php");
-        }
-        else{
-            if($selector == "learner"){
+        } else {
+            if ($selector == "learner") {
                 header("Location: ./learner/learner_dashboard.php");
             }
-            if($selector == "tutor"){
+            if ($selector == "tutor") {
                 header("Location: ./tutor/tutor_dashboard.php");
             }
         }
-	} 
-	else {
-		echo "<script>alert('Woops!! Email or Password is Wrong Or User is not active yet.')</script>";
-	}
+    } else {
+        echo "<script>alert('Woops!! Email or Password is Wrong Or User is not active yet.')</script>";
+    }
 }
 
 
 if (isset($_POST['submit'])) {
-	$email = $_POST['semail'];
-	$password = md5($_POST['spassword']);
-	$cpassword = md5($_POST['cpassword']);
+    $email = $_POST['semail'];
+    $password = md5($_POST['spassword']);
+    $cpassword = md5($_POST['cpassword']);
 
-	if ($password == $cpassword) {
-		$sql = "SELECT * FROM `user` WHERE `email`='$email'";
-		$result = mysqli_query($conn, $sql);
-		if (!$result->num_rows > 0) {
+    if ($password == $cpassword) {
+        $sql = "SELECT * FROM `user` WHERE `email`='$email'";
+        $result = mysqli_query($conn, $sql);
+        if (!$result->num_rows > 0) {
 
             $row = mysqli_fetch_assoc($result);
             $_SESSION['email'] = $row['email'];
-            
-            $token = bin2hex(random_bytes(10));//Random bytes
 
-            // echo $token;
+            $token = bin2hex(random_bytes(10)); //Random bytes
 
             $html = file_get_contents('./email_formats/email.html');
 
             $subject = "CourseUp : Email Verification";
             $url = "http://localhost/CourseUp/activate.php?token=$token";
 
-            $html =  str_replace("{{LINK}}",$url,$html);
+            $html =  str_replace("{{LINK}}", $url, $html);
             $headers  = 'MIME-Version: 1.0' . "\r\n";
             $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
             $headers .= "From: hbprajapati54@gmail.com";
@@ -84,88 +79,74 @@ if (isset($_POST['submit'])) {
                 header("Location: login.php");
             }
 
-			$sql = "INSERT INTO `user` (`email`, `password`,`token`) VALUES ('$email', '$password','$token')";
+            $sql = "INSERT INTO `user` (`email`, `password`,`token`) VALUES ('$email', '$password','$token')";
 
-			$result = mysqli_query($conn, $sql);
-			if ($result) {
+            $result = mysqli_query($conn, $sql);
+            if ($result) {
                 header("Location: login.php");
 
-				$email = "";
-				$_POST['password'] = "";
-				$_POST['cpassword'] = "";
-			} 
-			else 
-			{
-				echo "<script>alert('Woops! Something Wrong Went.')</script>";
-			}
-		} 
-		else {
-				echo "<script>alert('User already Exists.')</script>";
-		}		
-	} 
-	else {
-		echo "<script>alert('Password Not Matched.')</script>";
-	}
+                $email = "";
+                $_POST['password'] = "";
+                $_POST['cpassword'] = "";
+            } else {
+                echo "<script>alert('Woops! Something Wrong Went.')</script>";
+            }
+        } else {
+            echo "<script>alert('User already Exists.')</script>";
+        }
+    } else {
+        echo "<script>alert('Password Not Matched.')</script>";
+    }
 }
 
-if(isset($_GET["code"])){
- $token = $google_client->fetchAccessTokenWithAuthCode($_GET["code"]);
+if (isset($_GET["code"])) {
+    $token = $google_client->fetchAccessTokenWithAuthCode($_GET["code"]);
 
- if(!isset($token['error']))
- {
-  $google_client->setAccessToken($token['access_token']);
+    if (!isset($token['error'])) {
+        $google_client->setAccessToken($token['access_token']);
 
-  $_SESSION['access_token'] = $token['access_token'];
+        $_SESSION['access_token'] = $token['access_token'];
 
-  $google_service = new Google_Service_Oauth2($google_client);
+        $google_service = new Google_Service_Oauth2($google_client);
 
-  $data = $google_service->userinfo->get();
+        $data = $google_service->userinfo->get();
 
-  if(!empty($data['email']))
-  {
-   $email = $data['email'];
-   $_SESSION['name'] = $data['name'];
+        if (!empty($data['email'])) {
+            $email = $data['email'];
+            $_SESSION['name'] = $data['name'];
 
-   $sql = "SELECT * FROM `user` WHERE `email`='$email'";
-   $result = mysqli_query($conn, $sql);
-    if (!$result->num_rows > 0) {
-        $sql2 = "INSERT INTO `user` (`email`, `password`,`token`,`active`) VALUES ('$email', '','',1)";
+            $sql = "SELECT * FROM `user` WHERE `email`='$email'";
+            $result = mysqli_query($conn, $sql);
+            if (!$result->num_rows > 0) {
+                $sql2 = "INSERT INTO `user` (`email`, `password`,`token`,`active`) VALUES ('$email', '','',1)";
 
-        $result2 = mysqli_query($conn, $sql2);
-        if ($result2) {
-            // header("Location: create_profile.php");
-            header("Location: select_role.php");
-            $email = "";
-        } 
-        else 
-        {
-            echo "<script>alert('Woops! Something Wrong Went.')</script>";
-        }
-    }
-    else {
-        $row = mysqli_fetch_assoc($result);
-        $_SESSION['email'] = $row['email'];
-        $_SESSION['usr_id'] = $row['id'];
+                $result2 = mysqli_query($conn, $sql2);
+                if ($result2) {
+                    header("Location: select_role.php");
+                    $email = "";
+                } else {
+                    echo "<script>alert('Woops! Something Wrong Went.')</script>";
+                }
+            } else {
+                $row = mysqli_fetch_assoc($result);
+                $_SESSION['email'] = $row['email'];
+                $_SESSION['usr_id'] = $row['id'];
 
-        $selector = $row['selector'];
+                $selector = $row['selector'];
 
-        if(empty($selector)){
-            // header("Location: create_profile.php");
-            header("Location: select_role.php");
-        }
-        else{
-            if($selector == "learner"){
-                header("Location: ./learner/learner_dashboard.php");
-            }
-            if($selector == "tutor"){
-                header("Location: ./tutor/tutor_dashboard.php");
+                if (empty($selector)) {
+                    header("Location: select_role.php");
+                } else {
+                    if ($selector == "learner") {
+                        header("Location: ./learner/learner_dashboard.php");
+                    }
+                    if ($selector == "tutor") {
+                        header("Location: ./tutor/tutor_dashboard.php");
+                    }
+                }
             }
         }
-        // header("Location: welcome.php");
     }
-
-  }
- }
 }
 ?>
 
@@ -179,18 +160,20 @@ if(isset($_GET["code"])){
             <div class="form-content">
                 <header>Login</header>
                 <form action="" method="POST">
-                    <span style="color:green;font-size:13px"><?php if(isset($_SESSION['activation_msg'])){
-                        echo $_SESSION['activation_msg'];
-                    } ?></span>
+                    <span style="color:green;font-size:13px"><?php if (isset($_SESSION['activation_msg'])) {
+                                                                    echo $_SESSION['activation_msg'];
+                                                                } ?></span>
 
                     <div class="field input-field">
-                        <input type="email" oninput="validateEmail(this)" placeholder="Enter Email" name="email" class="input" value="<?php if(isset($_COOKIE['email']))
-                        { echo $_COOKIE['email']; } ?>">
+                        <input type="email" oninput="validateEmail(this)" placeholder="Enter Email" name="email" class="input" value="<?php if (isset($_COOKIE['email'])) {
+                                                                                                                                            echo $_COOKIE['email'];
+                                                                                                                                        } ?>">
                         <p id="email_error" class="error"></p>
                     </div>
                     <div class="field input-field" style="margin:25px 0px">
-                        <input type="password" oninput="validatePassword(this)" placeholder="Enter Password" name="password" class="password" value="<?php if(isset($_COOKIE['password']))
-                        { echo $_COOKIE['password']; } ?>">
+                        <input type="password" oninput="validatePassword(this)" placeholder="Enter Password" name="password" class="password" value="<?php if (isset($_COOKIE['password'])) {
+                                                                                                                                                            echo $_COOKIE['password'];
+                                                                                                                                                        } ?>">
                         <i class='bx bx-hide eye-icon'></i>
                         <p id="password_error" class="error"></p>
                     </div>
@@ -212,8 +195,8 @@ if(isset($_GET["code"])){
             </div>
             <div class="line"></div>
             <div class="media-options">
-                <?php 
-                    echo '<a href="'.$google_client->createAuthUrl().'" class="field google">
+                <?php
+                echo '<a href="' . $google_client->createAuthUrl() . '" class="field google">
                         <img src="./img/google.png" alt="" class="google-img">
                         <span>Login with Google</span>
                     </a>';
@@ -254,8 +237,8 @@ if(isset($_GET["code"])){
 
             <div class="line"></div>
             <div class="media-options">
-                <?php 
-                    echo '<a href="'.$google_client->createAuthUrl().'" class="field google">
+                <?php
+                echo '<a href="' . $google_client->createAuthUrl() . '" class="field google">
                         <img src="./img/google.png" alt="" class="google-img">
                         <span>Login with Google</span>
                     </a>';
@@ -273,26 +256,22 @@ if(isset($_GET["code"])){
             let name = element.name;
             let pattern = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9]+[.]+[a-zA-Z.]+$/;
             if (email.length == 0) {
-                document.getElementById(name+"_error").innerHTML = "*This field is required.";
-            }
-            else if (!email.match(pattern)) {
-                document.getElementById(name+"_error").innerHTML = "*Please enter valid email format.";
-            }
-            else {
-                document.getElementById(name+"_error").innerHTML = "";
+                document.getElementById(name + "_error").innerHTML = "*This field is required.";
+            } else if (!email.match(pattern)) {
+                document.getElementById(name + "_error").innerHTML = "*Please enter valid email format.";
+            } else {
+                document.getElementById(name + "_error").innerHTML = "";
             }
         }
         const validatePassword = (element) => {
             let password = element.value;
             let name = element.name;
             if (password.length == 0) {
-                document.getElementById(name+"_error").innerHTML = "*This field is required.";
-            }
-            else if (password.length < 8 ) {
-                document.getElementById(name+"_error").innerHTML = "*Password must be of 8 characters.";
-            }
-            else {
-                document.getElementById(name+"_error").innerHTML = "";
+                document.getElementById(name + "_error").innerHTML = "*This field is required.";
+            } else if (password.length < 8) {
+                document.getElementById(name + "_error").innerHTML = "*Password must be of 8 characters.";
+            } else {
+                document.getElementById(name + "_error").innerHTML = "";
             }
         }
         const validateConfirmPassword = (element) => {
@@ -301,10 +280,9 @@ if(isset($_GET["code"])){
             let password = document.getElementById("password").value;
             // alert(password)
             if (password != cpassword) {
-                document.getElementById(name+"_error").innerHTML = "*Password are not matching.";
-            }
-            else {
-                document.getElementById(name+"_error").innerHTML = "";
+                document.getElementById(name + "_error").innerHTML = "*Password are not matching.";
+            } else {
+                document.getElementById(name + "_error").innerHTML = "";
             }
         }
     </script>

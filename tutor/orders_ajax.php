@@ -44,6 +44,7 @@ if (isset($_POST['start_date'])) {
     </tbody>
     </table>
     </div>
+    <button class="btn btn-primary" onclick="ExportToExcel('xlsx')">Export Payment Report</button>
 <?php
     } else {
         echo "<h6>No orders in this duration.</h6>";

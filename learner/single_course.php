@@ -118,7 +118,7 @@ $learner_id = $_SESSION['learner_id'];
                     }
                     ?>
                     <h3 id="price">Price : <?php echo $row['price']; ?></h3>
-                    <p><?php echo $row['description']; ?></p>
+                    <p style="padding: 20px"><?php echo $row['description']; ?></p>
                   </div>
               <?php
                 }
@@ -197,7 +197,6 @@ $learner_id = $_SESSION['learner_id'];
       var email = '<?php echo $email; ?>';
       var cousre_id = <?php echo $course_id; ?>;
       var tutor_id = '<?php echo $tutor_id; ?>';
-      // alert(tutor_id);
 
       var options = {
         "key": "rzp_test_DKZesYIjZMQ68l",

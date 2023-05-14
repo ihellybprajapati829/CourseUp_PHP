@@ -130,19 +130,19 @@ $users = $row['users'];
         <br>
         <div class="row">
           <div class="col-md-3">
-            <div class="info-box">
+            <div class="info-box" style="height:120px;width:240px">
               <h6>No of Courses</h6>
               <h2><?php echo $count; ?></h2>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="info-box">
+            <div class="info-box" style="height:120px;width:240px">
               <h6>Total Users(All courses)</h6>
               <h2><?= $users ?></h2>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="info-box">
+            <div class="info-box" style="height:120px;width:240px">
               <h6>Earning(In Rs.)</h6>
               <h2><?= number_format($amount) ?></h2>
             </div>
@@ -159,7 +159,7 @@ $users = $row['users'];
           <div class="row">
             <?php
             while ($row = mysqli_fetch_assoc($query_run)) { ?>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <div class="info-box">
                   <img src="<?php echo $row['image'] ?>" alt="" srcset="">
                   <h6><?php echo $row['name'] ?></h6>

@@ -15,16 +15,6 @@ $image = $_SESSION['image'];
 $name = $_SESSION['name'];
 $tutor_id = $_SESSION['tutor_id'];
 
-$sql = "SELECT MAX(id) as 'max' FROM `course`";
-$result = mysqli_query($conn, $sql);
-
-if ($result->num_rows > 0) {
-    $row = mysqli_fetch_assoc($result);
-    $count = $row['max'] + 1;
-    $_SESSION['course_id'] = $count;
-}
-
-
 if (isset($_POST['add_course'])) {
     $cname = $_POST['cname'];
     $category_id = $_POST['category'];
@@ -45,13 +35,52 @@ if (isset($_POST['add_course'])) {
         $destfile = '../thumbnail/' . $filename;
         move_uploaded_file($filepath, $destfile);
 
-        $sql2 = "INSERT INTO `course` (`id`,`category_id`,`tutor_id`,`name`,`description`,`price`,`image`,`active`) VALUES ('$count','$category_id','$tutor_id','$cname','$cdesc','$price','$destfile',1)";
 
+        $lessonArray = json_decode($_POST['lessonArray']);
+        // print_r($lessonArray[0]->lcontent);
+        // die();
+
+        mysqli_autocommit($conn, False);
+
+        $sql2 = "INSERT INTO `course` (`category_id`,`tutor_id`,`name`,`description`,`price`,`image`,`active`) VALUES ('$category_id','$tutor_id','$cname','$cdesc','$price','$destfile',1)";
         $result2 = mysqli_query($conn, $sql2);
 
         if ($result2) {
-            // header("Location: ./add_course.php");
-            $_SESSION['msg'] = "Course Added.";
+
+            $sql = "SELECT `id` FROM `course` WHERE `tutor_id` = '$tutor_id' AND `name` = '$cname'";
+            $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_assoc($result);
+            $course_id = $row['id'];
+
+            $flag = 0;
+
+            for ($i = 0; $i < count($lessonArray); $i++) {
+
+                $lname = $lessonArray[$i]->lname;
+                $duration = $lessonArray[$i]->duration;
+                $lcontent = $lessonArray[$i]->lcontent;
+
+                $sql3 = "INSERT INTO `lessons` (`course_id`,`name`,`duration` ,`content`) VALUES ('$course_id','$lname','$duration','$lcontent')";
+
+                $result3 = mysqli_query($conn, $sql3);
+
+                if ($result3) {
+                    $flag = 1;
+                } else {
+                    $flag = 0;
+                    break;
+                }
+            }
+
+            if ($flag == 0) {
+                mysqli_rollback($conn);
+                $_SESSION['msg'] = "Course not added.";
+            }
+            if ($flag == 1) {
+                mysqli_commit($conn);
+                mysqli_autocommit($conn, TRUE);
+                $_SESSION['msg'] = "Course Added & Lessons added.";
+            }
         } else {
             echo "<script>alert('Woops! Something Wrong Went.')</script>";
         }
@@ -159,6 +188,7 @@ if (isset($_POST['add_course'])) {
                                         <h5>Course Name</h5>
                                     </label>
                                     <input type="text" class="form-control" name="cname" placeholder="Enter Course Name" required>
+                                    <input type="hidden" name="lessonArray" id="lessonArray">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="category" class="form-label">
@@ -259,14 +289,14 @@ if (isset($_POST['add_course'])) {
                                                     <label for="lname" class="form-label">
                                                         <h5>Lesson Name</h5>
                                                     </label>
-                                                    <input type="text" class="form-control" name="lname" placeholder="Enter lesson Name" required>
+                                                    <input type="text" class="form-control" name="lname" placeholder="Enter lesson Name" id="lname" required>
                                                 </div>
                                             </div>
                                             <br>
                                             <label for="time" class="form-label">
                                                 <h5>Duration</h5>
                                             </label>
-                                            <input type="time" class="form-control" name="duration" value="00:00" required>
+                                            <input type="time" class="form-control" name="duration" id="duration" value="00:00" required>
                                             <br>
                                             <label class="form-label">
                                                 <h5>Content</h5>
@@ -294,7 +324,7 @@ if (isset($_POST['add_course'])) {
             <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <button class="btn btn-success" form="addCourse" name="add_course" style="width:100%">Add
+                    <button class="btn btn-success" form="addCourse" name="add_course" id="add_course" style="width:100%">Add
                         Course</button>
                 </div>
                 <div class="col-md-4"></div>
@@ -312,29 +342,26 @@ if (isset($_POST['add_course'])) {
         //     CKEDITOR.replace('text_editor');
         //     // $ckeditor->editor('text_editor');
         // });
+        var lessonsArray = [];
 
         $("#addLesson").submit(function(event) {
             var data = CKEDITOR.instances.text_editor.getData();
             $('#getcontent').val(data);
-            submitForm();
+            var obj = {
+                lname: $('#lname').val(),
+                duration: $('#duration').val(),
+                lcontent: $('#getcontent').val()
+            }
+            lessonsArray.push(obj);
+            $('#addLesson')[0].reset();
+            CKEDITOR.instances.text_editor.setData('');
+            $("#addLesson-modal").modal('hide');
+
+            var json = JSON.stringify(lessonsArray);
+            $("#lessonArray").val(json);
+            alert("Lesson : " + obj.lname + "  added.");
             return false;
         });
-
-        function submitForm() {
-            $.ajax({
-                type: "POST",
-                url: "add_lesson.php",
-                data: $('form#addLesson').serialize(),
-                success: function(response) {
-                    $('#addLesson')[0].reset();
-                    $("#addLesson-modal").modal('hide');
-                    console.log(response);
-                },
-                error: function() {
-                    alert("Error");
-                }
-            });
-        }
     </script>
 </body>
 

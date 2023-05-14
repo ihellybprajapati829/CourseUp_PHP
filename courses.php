@@ -67,8 +67,9 @@
                         <?php
                         while ($row = mysqli_fetch_assoc($query_run)) { ?>
                             <div class="col-md-3">
-                                <div class="info-box">
-                                    <img src="<?php echo "./CourseUp/" . $row['image'] ?>" alt="" srcset="">
+                                <div class="info-box" style="height: 320px;width:300px">
+                                    <br>
+                                    <img src="<?php echo "./CourseUp/" . $row['image'] ?>">
                                     <h6><?php echo $row['name'] ?></h6>
                                 </div>
                             </div>
